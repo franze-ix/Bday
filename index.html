@@ -10,9 +10,9 @@
         body, html {
             margin: 0; padding: 0;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
-            background-attachment: fixed; /* Locks the background perfectly on mobile */
+            background-attachment: fixed; 
             min-height: 100vh;
-            min-height: 100dvh; /* Dynamic Viewport Height for mobile browsers */
+            min-height: 100dvh; 
             color: #4a4a4a;
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
@@ -37,7 +37,7 @@
 
         /* --- IRONCLAD INTRO SCREEN --- */
         #intro-screen {
-            height: 100vh; height: 100dvh; /* Mobile taskbar fix */
+            min-height: 100vh; min-height: 100dvh; 
             width: 100vw; 
             display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
@@ -45,11 +45,11 @@
             background: linear-gradient(135deg, #fff0f3 0%, #ffb3c6 100%);
             transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
             overflow-y: auto; 
-            padding: 30px 15px; box-sizing: border-box;
+            padding: 40px 15px; box-sizing: border-box;
         }
 
         .profile-pic {
-            width: 220px; height: 220px; border-radius: 50%; object-fit: cover;
+            width: 200px; height: 200px; border-radius: 50%; object-fit: cover;
             border: 8px solid white; box-shadow: 0 15px 40px rgba(255, 77, 109, 0.4);
             margin-bottom: 25px;
         }
@@ -57,26 +57,29 @@
         /* --- THE FLOW SECTIONS --- */
         #flow-container { 
             display: none; 
-            padding-top: 80px; 
-            padding-bottom: 500px; /* Huge padding so the last section never gets stuck under the nav bar */
+            padding-top: 60px; 
+            padding-bottom: 500px; 
         } 
 
         .section {
             display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
-            padding: 100px 20px; 
+            padding: 80px 10px; /* Reduced side padding so the box can breathe */
             min-height: 80vh;
             position: relative; z-index: 10;
         }
 
+        /* MOBILE FIX: Smaller width so background is visible on the sides */
         .content-box {
             background: rgba(255, 255, 255, 0.95);
-            padding: 40px 45px; 
+            padding: 35px 30px; 
             border-radius: 25px; 
-            width: 85%; max-width: 500px; 
+            width: 80%; /* Shrinks the box so pink background shows on left and right */
+            max-width: 500px; 
             box-shadow: 0 15px 40px rgba(255, 77, 109, 0.2);
             border-left: 8px solid #ff4d6d;
-            margin-bottom: 40px; 
+            margin-bottom: 30px; 
+            margin-left: auto; margin-right: auto; /* Centers the box */
         }
 
         .glow-box {
@@ -90,7 +93,8 @@
             100% { box-shadow: 0 15px 50px rgba(255, 0, 84, 0.5); transform: scale(1.02); }
         }
 
-        p { font-size: 24px; line-height: 1.8; margin-bottom: 30px; margin-top: 0; }
+        /* TEXT SIZING RESPONSIVE */
+        p { font-size: 22px; line-height: 1.7; margin-bottom: 25px; margin-top: 0; }
         .highlight { color: #ff4d6d; font-weight: bold; }
 
         .reveal-text {
@@ -105,7 +109,7 @@
 
         /* --- BUTTONS --- */
         button {
-            padding: 20px 45px; font-size: 24px; border: none; border-radius: 50px;
+            padding: 18px 40px; font-size: 22px; border: none; border-radius: 50px;
             cursor: pointer; font-weight: bold; transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif; margin: 15px; z-index: 100;
         }
@@ -116,24 +120,31 @@
         .runaway { position: fixed !important; transition: left 0.4s ease, top 0.4s ease; }
 
         /* --- CHAT SIMULATION --- */
-        .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; min-height: 200px; margin-bottom: 40px;}
+        .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; min-height: 180px; margin-bottom: 30px;}
         .chat-bubble {
-            background: white; color: #ff4d6d; padding: 18px 35px; border-radius: 35px;
-            font-size: 22px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); font-weight: 600;
+            background: white; color: #ff4d6d; padding: 15px 30px; border-radius: 35px;
+            font-size: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); font-weight: 600;
             opacity: 0; transition: 0.8s; border: 2px solid #ffccd5;
         }
 
         #music-btn {
             position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.8);
             border: 2px solid #ff4d6d; color: #ff4d6d; border-radius: 50%;
-            width: 60px; height: 60px; cursor: pointer; z-index: 1000; display: none; font-size: 28px;
+            width: 55px; height: 55px; cursor: pointer; z-index: 1000; display: none; font-size: 26px;
         }
 
+        /* --- FIXED SUCCESS SCREEN --- */
         #success-screen {
-            display: none; height: 100vh; height: 100dvh; width: 100vw; flex-direction: column;
+            display: none; 
+            min-height: 100dvh; /* Ensures it covers full height dynamically */
+            width: 100vw; 
+            flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
             position: fixed; top: 0; left: 0; z-index: 10000;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
+            padding: 40px 20px 120px 20px; /* Big bottom padding lifts text out of the taskbar */
+            box-sizing: border-box; /* Keeps padding inside the screen bounds */
+            overflow-y: auto; /* Adds scroll if her screen is very small */
         }
     </style>
 </head>
@@ -153,39 +164,39 @@
 
     <div id="intro-screen">
         <img src="photo.jpg" alt="Priyal" class="profile-pic" onerror="this.style.display='none'">
-        <h1 style="font-size: 38px; margin-bottom: 10px;">Happy Birthday Priyal! 🎂</h1>
-        <p style="font-size: 20px; max-width: 90%; margin-bottom: 25px; line-height: 1.5;">
+        <h1 style="font-size: 36px; margin-bottom: 10px;">Happy Birthday Priyal! 🎂</h1>
+        <p style="font-size: 18px; max-width: 90%; margin-bottom: 25px; line-height: 1.5;">
             Happpiest Birthday dear Prinsu! ✨ <br><br>
             Enjoy your special day as you wish. I hope today brings you as much joy as your smile brings to me everyday.
         </p>
-        <p style="font-size: 18px; font-style: italic; color: #ff0054; margin-bottom: 20px;">
+        <p style="font-size: 16px; font-style: italic; color: #ff0054; margin-bottom: 20px;">
             I have one small gift for you... Please open this once, tap to open !!!
         </p>
-        <button class="primary-btn" onclick="startFlow()" style="margin-top: 5px; font-size: 22px; padding: 15px 40px;">Open My Gift 🎁</button>
+        <button class="primary-btn" onclick="startFlow()" style="margin-top: 5px; font-size: 20px; padding: 15px 35px;">Open My Gift 🎁</button>
     </div>
 
     <div id="flow-container">
 
         <div class="section">
             <div class="content-box">
-                <h2 class="reveal-text" style="font-size: 42px;">My Wishes for You...</h2>
+                <h2 class="reveal-text" style="font-size: 38px;">My Wishes for You...</h2>
                 <p class="reveal-text">On this day of joy and cheer, dear Priyal, 🎉<br>A candle glows brighter for your lovely smile. 🌟</p>
                 <p class="reveal-text">Through every season, you're a guiding light, 🌼<br>With heart so gentle, yet spirit bright. 🌈</p>
                 <p class="reveal-text">May laughter dance in your eyes so true, 😊<br>As dreams unfurl and skies turn blue. 🌌</p>
                 <p class="reveal-text">Your journey's path is filled with grace, 🌺<br>Each moment treasured, you lovingly embrace. 💖</p>
                 <p class="reveal-text">Happy birthday to you, with heartfelt delight, 🎂<br>May your world be magical, day and night. ✨</p>
             </div>
-            <p class="reveal-text" style="font-size: 20px; color: #888; margin-top: 50px;">(Scroll down slowly... 👇)</p>
+            <p class="reveal-text" style="font-size: 18px; color: #888; margin-top: 40px;">(Scroll down slowly... 👇)</p>
         </div>
 
         <div class="section" id="chat-section">
-            <h2 class="reveal-text" style="font-size: 38px; color: #ff4d6d; margin-bottom: 50px;">There’s something I never said...</h2>
+            <h2 class="reveal-text" style="font-size: 34px; color: #ff4d6d; margin-bottom: 40px;">There’s something I never said...</h2>
             <div class="chat-container" id="chat-box"></div>
         </div>
 
         <div class="section">
             <div class="content-box">
-                <h2 class="reveal-text" style="font-size: 45px;">hey Priyee... ❤️</h2>
+                <h2 class="reveal-text" style="font-size: 40px;">Hey Priyee... ❤️</h2>
                 <p class="reveal-text">Hey Priyal... Kevi che?</p>
                 <p class="reveal-text">Khabar nathi aa vaat kevi rite saru karu, pan have badhu dil ma rakhi shakay tem nathi.</p>
                 <p class="reveal-text">Aapni aa safar 11th standard na school na divaso thi saru thai hati. Tyare mari pase tari sathe vaat karvani himmat j nati, and na koi contact karvani.</p>
@@ -211,7 +222,7 @@
 
         <div class="section">
             <div class="content-box glow-box">
-                <p class="reveal-text" style="font-size: 30px; font-weight: bold; color: #ff0054; line-height: 1.6; text-align: center;">
+                <p class="reveal-text" style="font-size: 26px; font-weight: bold; color: #ff0054; line-height: 1.6; text-align: center;">
                     "Me tane varsho thi moun (silence) ma love karyo chhe... <br><br>
                     Mane bas em hatu ke tane khabar hoy ke hu tane aaje pan eklo j prem karu chu."
                 </p>
@@ -226,9 +237,9 @@
         </div>
 
         <div class="section" style="min-height: 80vh;">
-            <h2 class="reveal-text" style="font-size: 48px; color: #ff0054; margin-bottom: 60px;">Do you like my gift, Prinsu? 🥺❤️</h2>
+            <h2 class="reveal-text" style="font-size: 42px; color: #ff0054; margin-bottom: 50px;">Do you like my gift, Prinsu? 🥺❤️</h2>
             
-            <div style="display: flex; gap: 30px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap;">
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap;">
                 <button id="yes-btn" class="primary-btn reveal-text" onclick="showSuccess()">Saras Lagyu ✨</button>
                 <button id="no-btn" class="secondary-btn reveal-text" onclick="runAway()" onmouseover="runAway()">Khabar Nahi...</button>
             </div>
@@ -236,9 +247,9 @@
     </div>
 
     <div id="success-screen">
-        <h1 style="font-size: 60px;">You made me the happiest guy! 🎉❤️</h1>
-        <p style="font-size: 32px; max-width: 80%; line-height: 1.6; margin-top: 30px;">Thank you for liking my gift! Knowing my feelings reached your heart makes this the best birthday ever.</p>
-        <p style="font-size: 80px; margin-top: 50px;">🥰 🦋 ✨</p>
+        <h1 style="font-size: 50px;">You made me the happiest guy! 🎉❤️</h1>
+        <p style="font-size: 26px; max-width: 90%; line-height: 1.6; margin-top: 20px;">Thank you for liking my gift! Knowing my feelings reached your heart makes this the best birthday ever.</p>
+        <p style="font-size: 70px; margin-top: 40px;">🥰 🦋 ✨</p>
     </div>
 
     <script>
@@ -339,9 +350,9 @@
             noCount++;
 
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            yesBtn.style.fontSize = (currentSize + 8) + 'px';
+            yesBtn.style.fontSize = (currentSize + 6) + 'px';
             const currentPadding = parseFloat(window.getComputedStyle(yesBtn).paddingTop);
-            yesBtn.style.padding = `${currentPadding + 3}px ${currentPadding * 2.8}px`;
+            yesBtn.style.padding = `${currentPadding + 2}px ${currentPadding * 2.5}px`;
 
             noBtn.classList.add('runaway');
             
