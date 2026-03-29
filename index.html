@@ -11,7 +11,7 @@
             margin: 0; padding: 0;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
             background-attachment: fixed; 
-            min-height: 100vh; min-height: 100dvh; 
+            min-height: 100%; 
             color: #4a4a4a; font-family: 'Poppins', sans-serif;
             overflow-x: hidden; scroll-behavior: smooth;
         }
@@ -32,7 +32,7 @@
 
         /* --- INTRO SCREEN --- */
         #intro-screen {
-            min-height: 100vh; min-height: 100dvh; width: 100vw; 
+            height: 100%; width: 100vw; 
             display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
             position: fixed; top: 0; left: 0; z-index: 9999; 
@@ -109,29 +109,45 @@
         }
         .shake-error { animation: shake 0.5s ease-in-out; background-color: #ff0000 !important; }
 
-        /* --- UPDATED SUCCESS SCREEN (SCROLLABLE) --- */
+        /* --- UPDATED SUCCESS SCREEN (SCROLLABLE FOR MOBILE) --- */
         #success-screen {
             display: none; 
             width: 100vw; 
+            height: 100%; /* Fixes the mobile stretch bug */
             flex-direction: column; 
+            justify-content: flex-start; /* THIS UNLOCKS THE SCROLLING */
             align-items: center; 
             text-align: center;
             position: fixed; top: 0; left: 0; z-index: 10000;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
-            padding: 60px 20px 200px 20px; /* Massive bottom padding for scrolling space */
+            padding: 40px 15px 150px 15px; /* Huge bottom padding so button is never hidden */
             box-sizing: border-box; 
-            overflow-y: auto; /* ALLOWS SCROLLING */
-            height: 100vh; height: 100dvh;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; /* Forces iOS to scroll */
         }
 
-        #post-reply-screen { display: none; margin-top: 30px; }
+        #main-success-content, #post-reply-screen {
+            margin-top: auto; 
+            margin-bottom: auto; /* Centers content naturally if there is room */
+            width: 100%;
+            max-width: 600px;
+        }
 
+        #post-reply-screen { display: none; }
+
+        /* --- MOBILE PERFECT SIZING FIX --- */
         @media (max-width: 600px) {
             .profile-pic { width: 150px; height: 150px; }
             #intro-screen h1 { font-size: 28px; }
             #intro-screen p { font-size: 16px; }
             p { font-size: 18px; }
-            .content-box { width: 90%; }
+            .content-box { width: 90%; padding: 25px 20px; }
+            
+            /* Make the reply screen fit better on small phones */
+            #success-screen h1 { font-size: 36px; margin-top: 20px; }
+            .reply-box { padding: 15px; width: 95%; margin-top: 10px; }
+            textarea { height: 90px; font-size: 16px; margin-bottom: 10px; }
+            button.primary-btn { padding: 12px 25px; font-size: 18px; }
         }
     </style>
 </head>
@@ -229,25 +245,25 @@
     <div id="success-screen">
         <div id="main-success-content">
             <h1 style="font-size: 45px;">You made me the happiest guy! 🎉❤️</h1>
-            <p style="font-size: 22px; max-width: 90%; line-height: 1.6; margin-top: 15px;">
+            <p style="font-size: 20px; max-width: 100%; line-height: 1.5; margin-top: 15px;">
                 Thank you for liking my gift! Knowing my feelings reached your heart makes this the best birthday ever.
             </p>
 
             <div class="reply-box" id="reply-box">
-                <p style="font-size: 18px; font-weight: bold; color: #ff0054; margin-bottom: 15px;">
+                <p style="font-size: 16px; font-weight: bold; color: #ff0054; margin-bottom: 10px;">
                     Tari dil ni koi vaat kevi hoy toh ahiya lakhi shake che... 💌
                 </p>
                 <form id="reply-form">
                     <textarea id="reply-text" name="Prinsu_Message" placeholder="Type your message here..."></textarea>
-                    <button type="submit" id="send-btn" class="primary-btn" style="padding: 12px 35px; font-size: 20px;">Send Reply ✨</button>
+                    <button type="submit" id="send-btn" class="primary-btn">Send Reply ✨</button>
                 </form>
             </div>
         </div>
 
         <div id="post-reply-screen">
-            <h2 class="reveal-text" style="font-size: 38px; color: #ff0054; margin-bottom: 20px;">Thank you so much for the reply! ❤️</h2>
-            <p class="reveal-text" style="font-size: 24px;">Once again, Happy Birthday Prinsu! 🎂</p>
-            <p class="reveal-text" style="font-size: 24px;">Best of luck for your life ahead. ✨</p>
+            <h2 class="reveal-text" style="font-size: 34px; color: #ff0054; margin-bottom: 20px;">Thank you so much for the reply! ❤️</h2>
+            <p class="reveal-text" style="font-size: 22px;">Once again, Happy Birthday Prinsu! 🎂</p>
+            <p class="reveal-text" style="font-size: 22px;">Best of luck for your life ahead. ✨</p>
             <p class="reveal-text" style="font-size: 45px; font-weight: bold; color: #ff4d6d; margin-top: 30px;">Byyy! 👋</p>
         </div>
     </div>
@@ -255,7 +271,6 @@
     <script>
         const music = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
-        let chatTriggered = false;
 
         function startFlow() {
             music.volume = 0.6;
@@ -319,7 +334,7 @@
             document.getElementById('flow-container').style.display = 'none';
             document.body.classList.add('locked'); 
             const success = document.getElementById('success-screen');
-            success.style.display = 'flex';
+            success.style.display = 'flex'; // Triggers the flex-start column layout
             window.scrollTo(0, 0);
         }
 
