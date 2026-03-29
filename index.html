@@ -23,7 +23,6 @@
 
         h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 600; color: #ff0054; margin-bottom: 15px; }
         
-        /* Floating Background Elements */
         .floater {
             position: fixed; opacity: 0.25; z-index: 0; pointer-events: none;
             animation: floatUp infinite linear;
@@ -37,12 +36,10 @@
 
         /* --- IRONCLAD INTRO SCREEN --- */
         #intro-screen {
-            height: 100%; min-height: 100dvh; 
+            min-height: 100vh; min-height: 100dvh; 
             width: 100vw; 
             display: flex; flex-direction: column;
-            /* Changed to flex-start so it allows scrolling down if needed */
-            justify-content: flex-start; 
-            align-items: center; text-align: center;
+            justify-content: center; align-items: center; text-align: center;
             position: fixed; top: 0; left: 0; z-index: 9999; 
             background: linear-gradient(135deg, #fff0f3 0%, #ffb3c6 100%);
             transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
@@ -53,7 +50,7 @@
         .profile-pic {
             width: 200px; height: 200px; border-radius: 50%; object-fit: cover;
             border: 8px solid white; box-shadow: 0 15px 40px rgba(255, 77, 109, 0.4);
-            margin-bottom: 20px; margin-top: auto; /* Helps center it safely */
+            margin-bottom: 25px;
         }
 
         /* --- THE FLOW SECTIONS --- */
@@ -119,73 +116,40 @@
 
         .runaway { position: fixed !important; transition: left 0.4s ease, top 0.4s ease; }
 
-        /* --- CHAT SIMULATION --- */
-        .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; min-height: 180px; margin-bottom: 30px;}
-        .chat-bubble {
-            background: white; color: #ff4d6d; padding: 15px 30px; border-radius: 35px;
-            font-size: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); font-weight: 600;
-            opacity: 0; transition: 0.8s; border: 2px solid #ffccd5;
-        }
-
-        #music-btn {
-            position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.8);
-            border: 2px solid #ff4d6d; color: #ff4d6d; border-radius: 50%;
-            width: 55px; height: 55px; cursor: pointer; z-index: 1000; display: none; font-size: 26px;
-        }
-
-        /* --- FIXED SUCCESS SCREEN --- */
-        #success-screen {
-            display: none; 
-            min-height: 100dvh; 
-            width: 100vw; 
-            flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            position: fixed; top: 0; left: 0; z-index: 10000;
-            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
-            padding: 40px 20px 120px 20px; 
-            box-sizing: border-box; 
-            overflow-y: auto; 
-        }
-
-        /* --- MOBILE SCREEN FIXES --- */
-        @media (max-width: 600px) {
-            .profile-pic { width: 150px; height: 150px; margin-bottom: 15px; }
-            #intro-screen h1 { font-size: 30px; margin-bottom: 5px; }
-            #intro-screen p { font-size: 16px; margin-bottom: 15px; }
-            #intro-screen button { padding: 12px 30px; font-size: 18px; margin-bottom: auto; }
-        }
-
-        /* --- REPLY BOX STYLES --- */
+        /* --- REPLY BOX & SHAKE ANIMATION --- */
         .reply-box {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 25px;
-            border-radius: 20px;
-            border: 2px solid #ffccd5;
-            margin-top: 30px;
-            width: 90%;
-            max-width: 450px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px; border-radius: 20px; border: 2px solid #ffccd5;
+            margin-top: 20px; width: 90%; max-width: 450px;
             box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15);
         }
-
         textarea {
-            width: 100%;
-            height: 120px;
-            padding: 15px;
-            border-radius: 15px;
-            border: 2px solid #ffb3c6;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            color: #4a4a4a;
-            resize: none;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-            background: #fffafa;
+            width: 100%; height: 120px; padding: 15px; border-radius: 15px;
+            border: 2px solid #ffb3c6; font-family: 'Poppins', sans-serif; font-size: 18px;
+            color: #4a4a4a; resize: none; box-sizing: border-box; margin-bottom: 15px; background: #fffafa;
+        }
+        textarea:focus { outline: none; border-color: #ff0054; box-shadow: 0 0 10px rgba(255, 0, 84, 0.1); }
+        
+        /* The Shake Animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+        .shake-error {
+            animation: shake 0.5s ease-in-out;
+            background-color: #ff0000 !important; /* Turns red briefly */
         }
 
-        textarea:focus {
-            outline: none;
-            border-color: #ff0054;
-            box-shadow: 0 0 10px rgba(255, 0, 84, 0.1);
+        #post-reply-screen { display: none; margin-top: 30px; }
+
+        #success-screen {
+            display: none; 
+            min-height: 100dvh; width: 100vw; 
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            position: fixed; top: 0; left: 0; z-index: 10000;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
+            padding: 40px 20px 120px 20px; box-sizing: border-box; overflow-y: auto; 
         }
     </style>
 </head>
@@ -194,7 +158,6 @@
     <audio id="bg-music" loop>
         <source src="music.mp3" type="audio/mpeg">
     </audio>
-    <button id="music-btn" onclick="toggleMusic()">🎵</button>
 
     <div class="floater" style="left: 10%; font-size: 45px; animation-duration: 14s;">🦋</div>
     <div class="floater" style="left: 20%; font-size: 55px; animation-duration: 18s; animation-delay: 2s;">❤️</div>
@@ -205,15 +168,15 @@
 
     <div id="intro-screen">
         <img src="photo.jpg" alt="Priyal" class="profile-pic" onerror="this.style.display='none'">
-        <h1>Happy Birthday Priyal! 🎂</h1>
-        <p style="max-width: 90%; line-height: 1.5;">
+        <h1 style="font-size: 36px; margin-bottom: 10px;">Happy Birthday Priyal! 🎂</h1>
+        <p style="font-size: 18px; max-width: 90%; margin-bottom: 25px; line-height: 1.5;">
             Happpiest Birthday dear Prinsu! ✨ <br><br>
             Enjoy your special day as you wish. I hope today brings you as much joy as your smile brings to me everyday.
         </p>
-        <p style="font-style: italic; color: #ff0054;">
+        <p style="font-size: 16px; font-style: italic; color: #ff0054; margin-bottom: 20px;">
             I have one small gift for you... Please open this once, tap to open !!!
         </p>
-        <button class="primary-btn" onclick="startFlow()">Open My Gift 🎁</button>
+        <button class="primary-btn" onclick="startFlow()" style="margin-top: 5px; font-size: 20px; padding: 15px 35px;">Open My Gift 🎁</button>
     </div>
 
     <div id="flow-container">
@@ -228,11 +191,6 @@
                 <p class="reveal-text">Happy birthday to you, with heartfelt delight, 🎂<br>May your world be magical, day and night. ✨</p>
             </div>
             <p class="reveal-text" style="font-size: 18px; color: #888; margin-top: 40px;">(Scroll down slowly... 👇)</p>
-        </div>
-
-        <div class="section" id="chat-section">
-            <h2 class="reveal-text" style="font-size: 34px; color: #ff4d6d; margin-bottom: 40px;">There’s something I never said...</h2>
-            <div class="chat-container" id="chat-box"></div>
         </div>
 
         <div class="section">
@@ -287,34 +245,38 @@
         </div>
     </div>
 
-   <div id="success-screen">
-        <h1 style="font-size: 50px;">You made me the happiest guy! 🎉❤️</h1>
-        <p style="font-size: 26px; max-width: 90%; line-height: 1.6; margin-top: 20px;">
-            Thank you for liking my gift! Knowing my feelings reached your heart makes this the best birthday ever.
-        </p>
-        
-        <div class="reply-box">
-            <p style="font-size: 18px; font-weight: bold; color: #ff0054; margin-bottom: 15px;">
-                Tari dil ni koi vaat kevi hoy toh ahiya lakhi shake che... 💌
+    <div id="success-screen">
+        <div id="main-success-content">
+            <h1 style="font-size: 45px;">You made me the happiest guy! 🎉❤️</h1>
+            <p style="font-size: 22px; max-width: 90%; line-height: 1.6; margin-top: 15px;">
+                Thank you for liking my gift! Knowing my feelings reached your heart makes this the best birthday ever.
             </p>
-            
-            <form action=  "https://formspree.io/f/xdapeylw" method="POST">
-                <textarea name="Prinsu_Message" placeholder="Type your message here..." required></textarea>
-                <button type="submit" class="primary-btn" style="padding: 12px 35px; font-size: 20px;">Send Reply ✨</button>
-            </form>
+
+            <div class="reply-box" id="reply-box">
+                <p style="font-size: 18px; font-weight: bold; color: #ff0054; margin-bottom: 15px;">
+                    Tari dil ni koi vaat kevi hoy toh ahiya lakhi shake che... 💌
+                </p>
+                <form id="reply-form">
+                    <textarea id="reply-text" name="Prinsu_Message" placeholder="Type your message here..."></textarea>
+                    <button type="submit" id="send-btn" class="primary-btn" style="padding: 12px 35px; font-size: 20px;">Send Reply ✨</button>
+                </form>
+            </div>
         </div>
 
-        <p style="font-size: 60px; margin-top: 20px;">🥰 🦋</p>
+        <div id="post-reply-screen">
+            <h2 class="reveal-text" style="font-size: 38px; color: #ff0054; margin-bottom: 20px;">Thank you so much for the reply! ❤️</h2>
+            <p class="reveal-text" style="font-size: 24px;">Once again, Happy Birthday Prinsu! 🎂</p>
+            <p class="reveal-text" style="font-size: 24px;">Best of luck for your life ahead. ✨</p>
+            <p class="reveal-text" style="font-size: 45px; font-weight: bold; color: #ff4d6d; margin-top: 30px;">Byyy! 👋</p>
+        </div>
     </div>
+
     <script>
         const music = document.getElementById('bg-music');
-        const musicBtn = document.getElementById('music-btn');
-        let chatTriggered = false;
 
         function startFlow() {
             music.volume = 0.6;
             music.play().catch(e => console.log("Audio play blocked"));
-            musicBtn.style.display = 'block';
 
             const intro = document.getElementById('intro-screen');
             intro.style.transform = 'translateY(-100vh)';
@@ -328,18 +290,11 @@
             }, 1200);
         }
 
-        function toggleMusic() {
-            if (music.paused) { music.play(); musicBtn.innerText = '🎵'; } 
-            else { music.pause(); musicBtn.innerText = '🔇'; }
-        }
-
         const observer = new IntersectionObserver((entries) => {
             let delay = 0; 
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, delay);
+                    setTimeout(() => entry.target.classList.add('visible'), delay);
                     delay += 1200; 
                     observer.unobserve(entry.target); 
                 }
@@ -347,52 +302,11 @@
         }, { threshold: 0.15 });
 
         document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
-        
-        const chatObserver = new IntersectionObserver((entries) => {
-            if(entries[0].isIntersecting && !chatTriggered) {
-                chatTriggered = true;
-                runChatSimulation();
-            }
-        });
-        chatObserver.observe(document.getElementById('chat-section'));
-
-        async function runChatSimulation() {
-            const chatBox = document.getElementById('chat-box');
-            const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-            const createBubble = (text) => {
-                const b = document.createElement('div');
-                b.className = 'chat-bubble';
-                b.innerText = text;
-                chatBox.appendChild(b);
-                setTimeout(() => b.style.opacity = '1', 100);
-                return b;
-            };
-
-            await sleep(1500);
-            let b1 = createBubble('Hi Priyal...');
-            await sleep(2500);
-            b1.style.opacity = '0'; setTimeout(() => b1.remove(), 800);
-
-            await sleep(1500);
-            let b2 = createBubble('I wanted to tell you something...');
-            await sleep(2500);
-            b2.style.opacity = '0'; setTimeout(() => b2.remove(), 800);
-
-            await sleep(2000);
-            createBubble('So I never said anything until today...');
-        }
 
         const noMessages = [
-            "Are you sure? 🥺",
-            "Please think again...",
-            "Me bau dil thi banavyu chhe",
-            "Ek var dil thi vichari le",
-            "Don't break my heart 💔",
-            "Taro ans ha j chhe but tu keti nathi",
-            "Have toh haa padi de!",
-            "Just think about my efforts",
-            "Last time vichari le"
+            "Are you sure? 🥺", "Please think again...", "Me bau dil thi banavyu chhe",
+            "Ek var dil thi vichari le", "Don't break my heart 💔", "Taro ans ha j chhe but tu keti nathi",
+            "Have toh haa padi de!", "Just think about my efforts", "Last time vichari le"
         ];
 
         let noCount = 0;
@@ -412,7 +326,6 @@
             
             const maxX = window.innerWidth - noBtn.offsetWidth - 30;
             const maxY = window.innerHeight - noBtn.offsetHeight - 30;
-            
             const randomX = Math.max(20, Math.floor(Math.random() * maxX));
             const randomY = Math.max(20, Math.floor(Math.random() * maxY));
 
@@ -423,11 +336,67 @@
         function showSuccess() {
             document.getElementById('flow-container').style.display = 'none';
             document.body.classList.add('locked'); 
-            
             const success = document.getElementById('success-screen');
             success.style.display = 'flex';
             window.scrollTo(0, 0);
         }
+
+        // --- THE SECRET AJAX FORM SUBMISSION & SHAKE EFFECT ---
+        document.getElementById('reply-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Stops the page from redirecting
+
+            const text = document.getElementById('reply-text').value.trim();
+            const btn = document.getElementById('send-btn');
+
+            // 1. IF BLANK: Shake the button angrily!
+            if (text === "") {
+                btn.classList.add('shake-error');
+                btn.innerText = "Write something! 🥺";
+                setTimeout(() => {
+                    btn.classList.remove('shake-error');
+                    btn.innerText = "Send Reply ✨";
+                }, 600);
+                return;
+            }
+
+            // 2. IF FILLED: Send it secretly
+            btn.innerText = "Sending... 🕊️";
+
+            // !!! IMPORTANT: PUT YOUR FORMSPREE LINK HERE !!!
+            const formspreeLink = "https://formspree.io/f/YOUR_LINK_HERE";
+
+            fetch(formspreeLink, {
+                method: "POST",
+                body: new FormData(this),
+                headers: { 'Accept': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    // Success! Hide the reply box and main text
+                    document.getElementById('main-success-content').style.display = 'none';
+                    
+                    // Show the Goodbye Messages
+                    const postScreen = document.getElementById('post-reply-screen');
+                    postScreen.style.display = 'block';
+
+                    // Animate the Goodbye messages line by line
+                    let delay = 0;
+                    postScreen.querySelectorAll('.reveal-text').forEach(el => {
+                        setTimeout(() => el.classList.add('visible'), delay);
+                        delay += 1200; 
+                    });
+
+                    // Automatically go back to Home Page after 8 seconds!
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 8000);
+
+                } else {
+                    btn.innerText = "Error! Try again.";
+                }
+            }).catch(error => {
+                btn.innerText = "Error! Try again.";
+            });
+        });
     </script>
 </body>
 </html>
