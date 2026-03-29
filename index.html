@@ -154,6 +154,39 @@
             #intro-screen p { font-size: 16px; margin-bottom: 15px; }
             #intro-screen button { padding: 12px 30px; font-size: 18px; margin-bottom: auto; }
         }
+
+        /* --- REPLY BOX STYLES --- */
+        .reply-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid #ffccd5;
+            margin-top: 30px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15);
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #ffb3c6;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            color: #4a4a4a;
+            resize: none;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            background: #fffafa;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ff0054;
+            box-shadow: 0 0 10px rgba(255, 0, 84, 0.1);
+        }
     </style>
 </head>
 <body class="locked">
@@ -254,12 +287,25 @@
         </div>
     </div>
 
-    <div id="success-screen">
+   <div id="success-screen">
         <h1 style="font-size: 50px;">You made me the happiest guy! 🎉❤️</h1>
-        <p style="font-size: 26px; max-width: 90%; line-height: 1.6; margin-top: 20px;">Thank you for liking my gift! Knowing my feelings reached your heart makes this the best birthday ever.</p>
-        <p style="font-size: 70px; margin-top: 40px;">🥰 🦋 ✨</p>
-    </div>
+        <p style="font-size: 26px; max-width: 90%; line-height: 1.6; margin-top: 20px;">
+            Thank you for liking my gift! Knowing my feelings reached your heart makes this the best birthday ever.
+        </p>
+        
+        <div class="reply-box">
+            <p style="font-size: 18px; font-weight: bold; color: #ff0054; margin-bottom: 15px;">
+                Tari dil ni koi vaat kevi hoy toh ahiya lakhi shake che... 💌
+            </p>
+            
+            <form action="YOUR_LINK_HERE" method="POST">
+                <textarea name="Prinsu_Message" placeholder="Type your message here..." required></textarea>
+                <button type="submit" class="primary-btn" style="padding: 12px 35px; font-size: 20px;">Send Reply ✨</button>
+            </form>
+        </div>
 
+        <p style="font-size: 60px; margin-top: 20px;">🥰 🦋</p>
+    </div>
     <script>
         const music = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
