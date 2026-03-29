@@ -25,12 +25,12 @@
         }
         @keyframes floatUp {
             0% { transform: translateY(110vh) scale(0.8) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.5; }
-            80% { opacity: 0.5; }
+            20% { opacity: 0.4; }
+            80% { opacity: 0.4; }
             100% { transform: translateY(-20vh) scale(1.2) rotate(25deg); opacity: 0; }
         }
 
-        /* --- INTRO SCREEN WITH MOBILE SCROLL FIX --- */
+        /* --- INTRO SCREEN --- */
         #intro-screen {
             min-height: 100vh; min-height: 100dvh; width: 100vw; 
             display: flex; flex-direction: column;
@@ -38,7 +38,7 @@
             position: fixed; top: 0; left: 0; z-index: 9999; 
             background: linear-gradient(135deg, #fff0f3 0%, #ffb3c6 100%);
             transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
-            overflow-y: auto; -webkit-overflow-scrolling: touch; /* Forces iOS to scroll */
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
             padding: 20px; box-sizing: border-box;
         }
 
@@ -65,15 +65,6 @@
             margin-left: auto; margin-right: auto; 
         }
 
-        .glow-box {
-            background: #fff0f3; border: 2px solid #ffb3c6; border-left: 10px solid #ff0054;
-            animation: pulseGlow 3s infinite alternate;
-        }
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 10px 30px rgba(255, 0, 84, 0.2); }
-            100% { box-shadow: 0 15px 50px rgba(255, 0, 84, 0.5); transform: scale(1.02); }
-        }
-
         p { font-size: 22px; line-height: 1.7; margin-bottom: 25px; margin-top: 0; }
         .highlight { color: #ff4d6d; font-weight: bold; }
 
@@ -83,7 +74,7 @@
         }
         .reveal-text.visible { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* --- BUTTONS & MUSIC TOGGLE --- */
+        /* --- BUTTONS --- */
         button {
             padding: 18px 40px; font-size: 22px; border: none; border-radius: 50px;
             cursor: pointer; font-weight: bold; transition: all 0.3s ease;
@@ -98,31 +89,19 @@
             position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9);
             border: 2px solid #ff4d6d; color: #ff4d6d; border-radius: 50%;
             width: 55px; height: 55px; cursor: pointer; display: none; font-size: 24px;
-            z-index: 99999; /* HIGHEST PRIORITY - ALWAYS CLICKABLE */
-            touch-action: manipulation; /* Removes tap delay on mobile */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 99999; touch-action: manipulation; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* --- CHAT SIMULATION --- */
-        .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; min-height: 180px; margin-bottom: 30px;}
-        .chat-bubble {
-            background: white; color: #ff4d6d; padding: 15px 30px; border-radius: 35px;
-            font-size: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); font-weight: 600;
-            opacity: 0; transition: 0.8s; border: 2px solid #ffccd5;
-        }
-
-        /* --- REPLY BOX & SHAKE ANIMATION --- */
+        /* --- REPLY BOX & SHAKE --- */
         .reply-box {
             background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 2px solid #ffccd5;
-            margin-top: 20px; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15);
+            margin: 20px auto; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15);
         }
         textarea {
             width: 100%; height: 120px; padding: 15px; border-radius: 15px; border: 2px solid #ffb3c6; 
             font-family: 'Poppins', sans-serif; font-size: 18px; color: #4a4a4a; resize: none; 
             box-sizing: border-box; margin-bottom: 15px; background: #fffafa;
         }
-        textarea:focus { outline: none; border-color: #ff0054; box-shadow: 0 0 10px rgba(255, 0, 84, 0.1); }
-        
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
@@ -130,24 +109,29 @@
         }
         .shake-error { animation: shake 0.5s ease-in-out; background-color: #ff0000 !important; }
 
-        #post-reply-screen { display: none; margin-top: 30px; }
+        /* --- UPDATED SUCCESS SCREEN (SCROLLABLE) --- */
         #success-screen {
-            display: none; min-height: 100dvh; width: 100vw; flex-direction: column; 
-            justify-content: center; align-items: center; text-align: center;
+            display: none; 
+            width: 100vw; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center;
             position: fixed; top: 0; left: 0; z-index: 10000;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
-            padding: 40px 20px 120px 20px; box-sizing: border-box; overflow-y: auto; 
+            padding: 60px 20px 200px 20px; /* Massive bottom padding for scrolling space */
+            box-sizing: border-box; 
+            overflow-y: auto; /* ALLOWS SCROLLING */
+            height: 100vh; height: 100dvh;
         }
 
-        /* --- MOBILE PERFECT SIZING FIX --- */
+        #post-reply-screen { display: none; margin-top: 30px; }
+
         @media (max-width: 600px) {
-            .profile-pic { width: 150px; height: 150px; margin-bottom: 15px; }
-            #intro-screen h1 { font-size: 28px; margin-bottom: 10px; }
-            #intro-screen p { font-size: 16px; margin-bottom: 15px; line-height: 1.4; }
-            button.primary-btn { padding: 15px 30px; font-size: 20px; }
-            .content-box { width: 90%; padding: 25px 20px; }
-            p { font-size: 18px; margin-bottom: 20px; }
-            h2.reveal-text { font-size: 30px !important; }
+            .profile-pic { width: 150px; height: 150px; }
+            #intro-screen h1 { font-size: 28px; }
+            #intro-screen p { font-size: 16px; }
+            p { font-size: 18px; }
+            .content-box { width: 90%; }
         }
     </style>
 </head>
@@ -189,11 +173,6 @@
                 <p class="reveal-text">Happy birthday to you, with heartfelt delight, 🎂<br>May your world be magical, day and night. ✨</p>
             </div>
             <p class="reveal-text" style="font-size: 18px; color: #888; margin-top: 40px;">(Scroll down slowly... 👇)</p>
-        </div>
-
-        <div class="section" id="chat-section">
-            <h2 class="reveal-text" style="font-size: 34px; color: #ff4d6d; margin-bottom: 40px;">There’s something I never said...</h2>
-            <div class="chat-container" id="chat-box"></div>
         </div>
 
         <div class="section">
@@ -282,11 +261,9 @@
             music.volume = 0.6;
             music.play().catch(e => console.log("Audio play blocked"));
             musicBtn.style.display = 'block';
-
             const intro = document.getElementById('intro-screen');
             intro.style.transform = 'translateY(-100vh)';
             intro.style.opacity = '0';
-
             setTimeout(() => {
                 intro.style.display = 'none';
                 document.getElementById('flow-container').style.display = 'block';
@@ -295,15 +272,9 @@
             }, 1200);
         }
 
-        // --- MUSIC BUTTON LOGIC ---
         function toggleMusic() {
-            if (music.paused) {
-                music.play();
-                musicBtn.innerText = '🎵';
-            } else {
-                music.pause();
-                musicBtn.innerText = '🔇';
-            }
+            if (music.paused) { music.play(); musicBtn.innerText = '🎵'; } 
+            else { music.pause(); musicBtn.innerText = '🔇'; }
         }
 
         const observer = new IntersectionObserver((entries) => {
@@ -319,32 +290,6 @@
 
         document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
 
-        const chatObserver = new IntersectionObserver((entries) => {
-            if(entries[0].isIntersecting && !chatTriggered) {
-                chatTriggered = true;
-                runChatSimulation();
-            }
-        });
-        chatObserver.observe(document.getElementById('chat-section'));
-
-        async function runChatSimulation() {
-            const chatBox = document.getElementById('chat-box');
-            const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-            const createBubble = (text) => {
-                const b = document.createElement('div');
-                b.className = 'chat-bubble'; b.innerText = text;
-                chatBox.appendChild(b);
-                setTimeout(() => b.style.opacity = '1', 100);
-                return b;
-            };
-
-            await sleep(1500); let b1 = createBubble('Hi Priyal...');
-            await sleep(2500); b1.style.opacity = '0'; setTimeout(() => b1.remove(), 800);
-            await sleep(1500); let b2 = createBubble('I wanted to tell you something...');
-            await sleep(2500); b2.style.opacity = '0'; setTimeout(() => b2.remove(), 800);
-            await sleep(2000); createBubble('So I never said anything until today...');
-        }
-
         const noMessages = [
             "Are you sure? 🥺", "Please think again...", "Me bau dil thi banavyu chhe",
             "Ek var dil thi vichari le", "Don't break my heart 💔", "Taro ans ha j chhe but tu keti nathi",
@@ -355,22 +300,17 @@
         function runAway() {
             const noBtn = document.getElementById('no-btn');
             const yesBtn = document.getElementById('yes-btn');
-
             noBtn.innerText = noMessages[noCount % noMessages.length];
             noCount++;
-
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = (currentSize + 6) + 'px';
             const currentPadding = parseFloat(window.getComputedStyle(yesBtn).paddingTop);
             yesBtn.style.padding = `${currentPadding + 2}px ${currentPadding * 2.5}px`;
-
             noBtn.classList.add('runaway');
-            
             const maxX = window.innerWidth - noBtn.offsetWidth - 30;
             const maxY = window.innerHeight - noBtn.offsetHeight - 30;
             const randomX = Math.max(20, Math.floor(Math.random() * maxX));
             const randomY = Math.max(20, Math.floor(Math.random() * maxY));
-
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
         }
@@ -383,28 +323,18 @@
             window.scrollTo(0, 0);
         }
 
-        // --- THE SECRET AJAX FORM SUBMISSION & SHAKE EFFECT ---
         document.getElementById('reply-form').addEventListener('submit', function(e) {
             e.preventDefault(); 
-
             const text = document.getElementById('reply-text').value.trim();
             const btn = document.getElementById('send-btn');
-
             if (text === "") {
                 btn.classList.add('shake-error');
                 btn.innerText = "Write something! 🥺";
-                setTimeout(() => {
-                    btn.classList.remove('shake-error');
-                    btn.innerText = "Send Reply ✨";
-                }, 600);
+                setTimeout(() => { btn.classList.remove('shake-error'); btn.innerText = "Send Reply ✨"; }, 600);
                 return;
             }
-
             btn.innerText = "Sending... 🕊️";
-
-            // YOUR REAL FORMSPREE LINK IS HERE:
             const formspreeLink = "https://formspree.io/f/xdapeylw";
-
             fetch(formspreeLink, {
                 method: "POST",
                 body: new FormData(this),
@@ -414,20 +344,14 @@
                     document.getElementById('main-success-content').style.display = 'none';
                     const postScreen = document.getElementById('post-reply-screen');
                     postScreen.style.display = 'block';
-
                     let delay = 0;
                     postScreen.querySelectorAll('.reveal-text').forEach(el => {
                         setTimeout(() => el.classList.add('visible'), delay);
                         delay += 1200; 
                     });
-
                     setTimeout(() => { window.location.reload(); }, 8000);
-                } else {
-                    btn.innerText = "Error! Try again.";
-                }
-            }).catch(error => {
-                btn.innerText = "Error! Try again.";
-            });
+                } else { btn.innerText = "Error! Try again."; }
+            }).catch(error => { btn.innerText = "Error! Try again."; });
         });
     </script>
 </body>
