@@ -92,6 +92,14 @@
             z-index: 99999; touch-action: manipulation; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
+        /* --- CHAT SIMULATION --- */
+        .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; min-height: 180px; margin-bottom: 30px;}
+        .chat-bubble {
+            background: white; color: #ff4d6d; padding: 15px 30px; border-radius: 35px;
+            font-size: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); font-weight: 600;
+            opacity: 0; transition: 0.8s; border: 2px solid #ffccd5;
+        }
+
         /* --- REPLY BOX & SHAKE --- */
         .reply-box {
             background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 2px solid #ffccd5;
@@ -115,7 +123,7 @@
             width: 100vw; 
             height: 100%; 
             flex-direction: column; 
-            justify-content: flex-start; 
+            justify-content: flex-start; /* THIS UNLOCKS THE SCROLLING */
             align-items: center; 
             text-align: center;
             position: fixed; top: 0; left: 0; z-index: 10000;
@@ -146,8 +154,7 @@
             #success-screen h1 { font-size: 36px; margin-top: 20px; }
             .reply-box { padding: 15px; width: 95%; margin-top: 10px; }
             textarea { height: 90px; font-size: 16px; margin-bottom: 10px; }
-            button { padding: 14px 25px; font-size: 18px; }
-            .primary-btn, .secondary-btn { padding: 12px 25px; font-size: 18px; }
+            button.primary-btn, button.secondary-btn { padding: 12px 25px; font-size: 18px; margin: 10px; }
         }
     </style>
 </head>
@@ -189,6 +196,11 @@
                 <p class="reveal-text">Happy birthday to you, with heartfelt delight, 🎂<br>May your world be magical, day and night. ✨</p>
             </div>
             <p class="reveal-text" style="font-size: 18px; color: #888; margin-top: 40px;">(Scroll down slowly... 👇)</p>
+        </div>
+
+        <div class="section" id="chat-section">
+            <h2 class="reveal-text" style="font-size: 34px; color: #ff4d6d; margin-bottom: 40px;">There’s something I never said...</h2>
+            <div class="chat-container" id="chat-box"></div>
         </div>
 
         <div class="section">
@@ -255,7 +267,7 @@
                 </p>
                 <form id="reply-form">
                     <input type="hidden" id="gift-opinion" name="Button_Clicked" value="">
-                    
+
                     <textarea id="reply-text" name="Prinsu_Message" placeholder="Type your message here..."></textarea>
                     <button type="submit" id="send-btn" class="primary-btn">Send Reply ✨</button>
                 </form>
@@ -273,6 +285,7 @@
     <script>
         const music = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
+        let chatTriggered = false;
 
         function startFlow() {
             music.volume = 0.6;
@@ -307,15 +320,51 @@
 
         document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
 
-        // --- NEW LOGIC: Saves which button she clicked and shows success screen ---
+        // RESTORED CHAT SIMULATION LOGIC
+        const chatObserver = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting && !chatTriggered) {
+                chatTriggered = true;
+                runChatSimulation();
+            }
+        });
+        chatObserver.observe(document.getElementById('chat-section'));
+
+        async function runChatSimulation() {
+            const chatBox = document.getElementById('chat-box');
+            const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+            const createBubble = (text) => {
+                const b = document.createElement('div');
+                b.className = 'chat-bubble';
+                b.innerText = text;
+                chatBox.appendChild(b);
+                setTimeout(() => b.style.opacity = '1', 100);
+                return b;
+            };
+
+            await sleep(1500);
+            let b1 = createBubble('Hi Priyal...');
+            await sleep(2500);
+            b1.style.opacity = '0'; setTimeout(() => b1.remove(), 800);
+
+            await sleep(1500);
+            let b2 = createBubble('I wanted to tell you something...');
+            await sleep(2500);
+            b2.style.opacity = '0'; setTimeout(() => b2.remove(), 800);
+
+            await sleep(2000);
+            createBubble('So I never said anything until today...');
+        }
+
+        // NEW LOGIC: Store Button Choice & Show Success Screen
         function showSuccess(buttonChoice) {
-            // Put the text of the button she clicked into the hidden input
+            // Saves which button she clicked into the hidden input for Formspree
             document.getElementById('gift-opinion').value = buttonChoice; 
             
             document.getElementById('flow-container').style.display = 'none';
             document.body.classList.add('locked'); 
             const success = document.getElementById('success-screen');
-            success.style.display = 'flex'; 
+            success.style.display = 'flex'; // Unlocks mobile scrolling
             window.scrollTo(0, 0);
         }
 
