@@ -25,48 +25,66 @@
             z-index: 9999; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; text-align: center;
             transition: background-color 2s ease-in-out, transform 1.2s ease-in-out;
-            overflow: hidden; padding: 20px; box-sizing: border-box;
+            overflow-y: auto; overflow-x: hidden; padding: 20px; box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
         }
         #dark-room.lights-on {
             background: linear-gradient(135deg, #fff0f3 0%, #ffb3c6 100%);
         }
 
-        /* Bunting / Toran */
+        /* 1. Advanced Bunting / Toran */
         #bunting {
-            position: absolute; top: 30px; width: 100%; max-width: 600px;
-            display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; 
-            opacity: 0; transition: opacity 1s ease; z-index: 10001;
+            position: absolute; top: -150px; /* Starts hidden above screen */
+            width: 100%; max-width: 800px;
+            display: flex; flex-direction: column; align-items: center;
+            transition: top 1.5s cubic-bezier(0.25, 1, 0.5, 1); z-index: 10001;
         }
+        #bunting.drop { top: 20px; } /* Drops down dynamically */
+        
+        .bunting-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        
         .pennant {
-            width: 32px; height: 45px; background: #ff4d6d; color: white; font-weight: bold; font-size: 20px;
-            display: flex; justify-content: center; padding-top: 5px; box-sizing: border-box;
-            clip-path: polygon(0 0, 100% 0, 50% 100%); 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-            animation: swing 2s infinite ease-in-out alternate; transform-origin: top;
+            width: 42px; height: 58px; 
+            background: linear-gradient(135deg, #ff4d6d, #ff0054);
+            color: white; font-weight: bold; font-size: 26px;
+            display: flex; justify-content: center; align-items: flex-start; padding-top: 8px; box-sizing: border-box;
+            /* Swallowtail flag shape */
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
+            animation: swing 2.5s infinite ease-in-out alternate; transform-origin: top;
+            border-top: 3px solid #ffccd5; /* Looks like the string holding them */
         }
-        .pennant:nth-child(even) { background: #ff0054; animation-delay: 0.5s; }
+        .pennant:nth-child(even) { background: linear-gradient(135deg, #ff0054, #c9184a); animation-delay: 0.4s; }
+        
+        /* Special Golden Color for PRIYAL */
+        .highlight-pennant { 
+            background: linear-gradient(135deg, #ffb703, #fb8500) !important; 
+            font-size: 32px; width: 48px; height: 65px; 
+        }
         .space { width: 15px; } 
-        @keyframes swing { 0% { transform: rotate(10deg); } 100% { transform: rotate(-10deg); } }
+        @keyframes swing { 0% { transform: rotate(8deg); } 100% { transform: rotate(-8deg); } }
 
-        /* Balloons */
-        .balloon {
-            width: 50px; height: 65px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-            position: absolute; bottom: -100px; opacity: 0.85; z-index: 10000;
-            animation: floatUp ease-in forwards;
+        /* 2. Intro Wish Text (Above Cake) */
+        #intro-wish-text {
+            opacity: 0; transform: translateY(20px); 
+            transition: all 1.5s ease; z-index: 10002; 
+            margin-top: 150px; /* Pushes it below the double banner */
+            margin-bottom: 20px;
         }
-        .balloon::after {
-            content: ""; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
-            width: 2px; height: 40px; background: rgba(0,0,0,0.2);
+        #intro-wish-text p {
+            font-size: 20px; font-weight: 600; color: #ff0054; max-width: 90%; 
+            margin: 0 auto; text-shadow: 0 2px 10px rgba(255,255,255,0.8);
+            line-height: 1.6; background: rgba(255,255,255,0.6); padding: 15px 25px; border-radius: 20px;
         }
-        @keyframes floatUp { 0% { bottom: -100px; transform: translateX(0) rotate(0deg); } 100% { bottom: 120vh; transform: translateX(30px) rotate(15deg); } }
 
-        /* Cake & Candle */
+        /* 3. Cake & Candle */
         .cake-container {
             position: relative; opacity: 0; transform: scale(0.5); 
-            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); z-index: 10002; margin-top: 20px;
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); z-index: 10002;
         }
         .cake-container.show { opacity: 1; transform: scale(1); }
         .cake-emoji { font-size: 130px; margin: 0; line-height: 1; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2)); }
+        
         .flame {
             position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
             font-size: 45px; opacity: 0; transition: opacity 1s ease;
@@ -74,17 +92,32 @@
         }
         @keyframes flicker { 0% { transform: translateX(-50%) scale(1); opacity: 0.8; } 100% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
 
-        /* Confetti */
-        .confetti {
-            position: absolute; width: 10px; height: 10px; top: -20px; z-index: 10003;
-            animation: fall linear forwards;
+        /* Magic Glow behind cake when lit */
+        .cake-glow {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%);
+            border-radius: 50%; opacity: 0; transition: opacity 2s ease; z-index: -1;
         }
+
+        /* 4. Balloons & Confetti & Sparkles */
+        .balloon {
+            width: 50px; height: 65px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            position: absolute; bottom: -100px; opacity: 0.85; z-index: 10000; animation: floatUp ease-in forwards;
+        }
+        .balloon::after {
+            content: ""; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            width: 2px; height: 40px; background: rgba(0,0,0,0.2);
+        }
+        @keyframes floatUp { 0% { bottom: -100px; transform: translateX(0) rotate(0deg); } 100% { bottom: 120vh; transform: translateX(30px) rotate(15deg); } }
+
+        .confetti { position: absolute; width: 10px; height: 10px; top: -20px; z-index: 10003; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
 
+        .sparkle { position: absolute; font-size: 20px; color: gold; z-index: 10004; opacity: 0; animation: twinkle 1.5s ease-in-out forwards; }
+        @keyframes twinkle { 0% { opacity: 0; transform: scale(0.5) rotate(0deg); } 50% { opacity: 1; transform: scale(1.5) rotate(180deg); } 100% { opacity: 0; transform: scale(0.5) rotate(360deg); } }
+
         /* Final Intro Action */
-        #final-intro-action {
-            opacity: 0; transition: opacity 1s ease; z-index: 10005; margin-top: 40px;
-        }
+        #final-intro-action { opacity: 0; transition: opacity 1s ease; z-index: 10005; margin-top: 30px; margin-bottom: 50px; }
 
         /* --- BUTTONS --- */
         button {
@@ -104,10 +137,9 @@
             z-index: 99999; touch-action: manipulation; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* General Floaters for the background */
+        /* General Background Floaters */
         .floater {
-            position: fixed; opacity: 0.25; z-index: 0; pointer-events: none;
-            animation: backgroundFloat infinite linear;
+            position: fixed; opacity: 0.25; z-index: 0; pointer-events: none; animation: backgroundFloat infinite linear;
         }
         @keyframes backgroundFloat {
             0% { transform: translateY(110vh) scale(0.8) rotate(0deg); opacity: 0; }
@@ -130,26 +162,20 @@
             background: #fff0f3; border: 2px solid #ffb3c6; border-left: 10px solid #ff0054;
             animation: pulseGlow 3s infinite alternate;
         }
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 10px 30px rgba(255, 0, 84, 0.2); }
-            100% { box-shadow: 0 15px 50px rgba(255, 0, 84, 0.5); transform: scale(1.02); }
-        }
+        @keyframes pulseGlow { 0% { box-shadow: 0 10px 30px rgba(255, 0, 84, 0.2); } 100% { box-shadow: 0 15px 50px rgba(255, 0, 84, 0.5); transform: scale(1.02); } }
         p { font-size: 22px; line-height: 1.7; margin-bottom: 25px; margin-top: 0; }
         .highlight { color: #ff4d6d; font-weight: bold; }
-        .reveal-text {
-            opacity: 0; transform: translateY(50px) scale(0.95); transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
-        }
+        .reveal-text { opacity: 0; transform: translateY(50px) scale(0.95); transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
         .reveal-text.visible { opacity: 1; transform: translateY(0) scale(1); }
 
         /* --- CHAT SIMULATION --- */
         .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; min-height: 180px; margin-bottom: 30px;}
         .chat-bubble {
-            background: white; color: #ff4d6d; padding: 15px 30px; border-radius: 35px;
-            font-size: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); font-weight: 600;
-            opacity: 0; transition: 0.8s; border: 2px solid #ffccd5; text-align: center;
+            background: white; color: #ff4d6d; padding: 15px 30px; border-radius: 35px; font-size: 20px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); font-weight: 600; opacity: 0; transition: 0.8s; border: 2px solid #ffccd5;
         }
 
-        /* --- REPLY BOX & SUCCESS SCREEN --- */
+        /* --- SUCCESS SCREEN --- */
         .reply-box {
             background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 2px solid #ffccd5;
             margin: 20px auto; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15);
@@ -159,29 +185,27 @@
             font-family: 'Poppins', sans-serif; font-size: 18px; color: #4a4a4a; resize: none; 
             box-sizing: border-box; margin-bottom: 15px; background: #fffafa;
         }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
-            20%, 40%, 60%, 80% { transform: translateX(8px); }
-        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); } 20%, 40%, 60%, 80% { transform: translateX(8px); } }
         .shake-error { animation: shake 0.5s ease-in-out; background-color: #ff0000 !important; }
 
         #success-screen {
-            display: none; width: 100vw; height: 100%; flex-direction: column; 
-            justify-content: flex-start; align-items: center; text-align: center;
-            position: fixed; top: 0; left: 0; z-index: 10000;
-            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
-            padding: 40px 15px 150px 15px; box-sizing: border-box; 
-            overflow-y: auto; -webkit-overflow-scrolling: touch; 
+            display: none; width: 100vw; height: 100%; flex-direction: column; justify-content: flex-start; 
+            align-items: center; text-align: center; position: fixed; top: 0; left: 0; z-index: 10000;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%); padding: 40px 15px 150px 15px; 
+            box-sizing: border-box; overflow-y: auto; -webkit-overflow-scrolling: touch; 
         }
         #main-success-content, #post-reply-screen { margin-top: auto; margin-bottom: auto; width: 100%; max-width: 600px; }
         #post-reply-screen { display: none; }
 
+        /* --- MOBILE PERFECT SIZING FIX --- */
         @media (max-width: 600px) {
-            .pennant { width: 22px; height: 32px; font-size: 14px; padding-top: 3px; }
+            .pennant { width: 28px; height: 40px; font-size: 18px; padding-top: 5px; }
+            .highlight-pennant { width: 32px; height: 46px; font-size: 22px; }
             .space { width: 8px; }
             .cake-emoji { font-size: 100px; }
             .flame { font-size: 35px; top: -10px; }
+            #intro-wish-text { margin-top: 130px; margin-bottom: 10px; }
+            #intro-wish-text p { font-size: 16px; padding: 12px 15px; }
             button.primary-btn, button.secondary-btn { padding: 12px 25px; font-size: 18px; margin: 10px; }
             p { font-size: 18px; }
             .content-box { width: 90%; padding: 25px 20px; }
@@ -206,31 +230,36 @@
     <div class="floater" style="left: 85%; font-size: 35px; animation-duration: 13s; animation-delay: 7s;">🦋</div>
 
     <div id="dark-room">
+        
         <div id="bunting">
-            <div class="pennant">H</div><div class="pennant">A</div><div class="pennant">P</div><div class="pennant">P</div><div class="pennant">Y</div>
-            <div class="space"></div>
-            <div class="pennant">B</div><div class="pennant">D</div><div class="pennant">A</div><div class="pennant">Y</div>
-            <div class="space"></div>
-            <div class="pennant">P</div><div class="pennant">R</div><div class="pennant">I</div><div class="pennant">Y</div><div class="pennant">A</div><div class="pennant">L</div>
+            <div class="bunting-row">
+                <div class="pennant">H</div><div class="pennant">A</div><div class="pennant">P</div><div class="pennant">P</div><div class="pennant">Y</div>
+                <div class="space"></div>
+                <div class="pennant">B</div><div class="pennant">I</div><div class="pennant">R</div><div class="pennant">T</div><div class="pennant">H</div><div class="pennant">D</div><div class="pennant">A</div><div class="pennant">Y</div>
+            </div>
+            <div class="bunting-row">
+                <div class="pennant highlight-pennant">P</div><div class="pennant highlight-pennant">R</div><div class="pennant highlight-pennant">I</div><div class="pennant highlight-pennant">Y</div><div class="pennant highlight-pennant">A</div><div class="pennant highlight-pennant">L</div>
+            </div>
         </div>
 
         <button id="light-btn" class="secondary-btn" onclick="turnOnLights()">Turn On Lights 💡</button>
         <button id="start-music-btn" class="primary-btn" style="display:none;" onclick="startIntroSequence()">Start Music 🎵</button>
-        <div id="final-intro-action">
-            <p style="font-size: 18px; font-style: italic; color: #ff0054; margin-bottom: 10px;">
-                 Happpiest Birthday dear Prinsu! ✨ <br><br>
-            Enjoy your special day as you wish. I hope today brings you as much joy as your smile brings to me everyday.
+
+        <div id="intro-wish-text">
+            <p>
+                Happpiest Birthday dear Prinsu! ✨ <br><br>
+                Enjoy your special day as you wish. I hope today brings you as much joy as your smile brings to me everyday.
             </p>
-            <button class="primary-btn" onclick="startFlow()">Open this BOX 🎁</button>
         </div>
+
         <div id="cake-box" class="cake-container">
+            <div class="cake-glow" id="cake-glow"></div>
             <div id="candle-flame" class="flame">🔥</div>
             <div class="cake-emoji">🎂</div>
-            
         </div>
 
         <div id="final-intro-action">
-            <p style="font-size: 18px; font-style: italic; color: #ff0054; margin-bottom: 10px;">
+            <p style="font-size: 18px; font-style: italic; color: #ff0054; margin-bottom: 10px; background: rgba(255,255,255,0.7); padding: 5px 15px; border-radius: 10px;">
                 I have Something for you... Please open this once, tap to open !!!
             </p>
             <button class="primary-btn" onclick="startFlow()">Open this BOX 🎁</button>
@@ -255,8 +284,8 @@
             <div class="content-box">
                 <h2 class="reveal-text" style="font-size: 40px;">Hyy Prieeyal... ❤️</h2>
                 <p class="reveal-text">Khabar nathi aa vaat kevi rite saru karu, pan have badhu dil ma rakhi shakay tem nathi.</p>
-                <p class="reveal-text">Me tane 11th na starting  ma first time joy hati.E time mane taru name pan nati khabr , </p>
-                <p class="reveal-text"> Pachhi taru name and class janva malyu pachhi roj tu jova male eno j wait karto! ema j 11th puru thai gyu.</p>   
+                <p class="reveal-text">Me tane 11th na starting ma first time joy hati.E time mane taru name pan nati khabr , </p>
+                <p class="reveal-text">Pachhi taru name and class janva malyu pachhi roj tu jova male eno j wait karto! ema j 11th puru thai gyu.</p>   
             </div>
         </div>
 
@@ -272,9 +301,9 @@
         <div class="section">
             <div class="content-box">
                 <p class="reveal-text">Hu tane like karto hato but tane kyarey kidhu j nathi ... </p>
-                <p class="reveal-text"> But have eno afsos karvathi kai nai thay e mane khabr chhe </p>
-                <p class="reveal-text"> And thank you for coming  in my life because <span class="highlight">
-                    "you are  the girl that one's i loved with every piece of my heart, 
+                <p class="reveal-text">But have eno afsos karvathi kai nai thay e mane khabr chhe </p>
+                <p class="reveal-text">And thank you for coming in my life because <span class="highlight">
+                    "you are the girl that one's i loved with every piece of my heart, 
                      you taought me what loves feel like beautifull ..." </span>.</p>
             </div>
         </div>
@@ -354,28 +383,36 @@
             music.play().catch(e => console.log("Audio play blocked"));
             musicBtn.style.display = 'block';
 
-            // 2. Banner
-            await sleep(800);
-            document.getElementById('bunting').style.opacity = '1';
+            // 2. Drop Huge Banner
+            await sleep(500);
+            document.getElementById('bunting').classList.add('drop');
 
             // 3. Balloons
-            await sleep(1000);
-            createBalloons(25);
+            await sleep(800);
+            createBalloons(30);
 
-            // 4. Cake
-            await sleep(2500);
+            // 4. Show the Special Wish Paragraph
+            await sleep(1200);
+            const wishText = document.getElementById('intro-wish-text');
+            wishText.style.opacity = '1';
+            wishText.style.transform = 'translateY(0)';
+
+            // 5. Show Cake
+            await sleep(1500);
             document.getElementById('cake-box').classList.add('show');
 
-            // 5. Candle
-            await sleep(1500);
-            document.getElementById('candle-flame').style.opacity = '1';
-
-            // 6. Confetti
+            // 6. Light Candle & Sparkles & Glow
             await sleep(1000);
-            throwConfetti(100);
+            document.getElementById('candle-flame').style.opacity = '1';
+            document.getElementById('cake-glow').style.opacity = '1';
+            createSparkles(40);
 
-            // 7. Reveal "Open this BOX" button
-            await sleep(3000);
+            // 7. Confetti Explosion
+            await sleep(1000);
+            throwConfetti(150);
+
+            // 8. Reveal Final Button
+            await sleep(2500);
             document.getElementById('final-intro-action').style.opacity = '1';
         }
 
@@ -394,7 +431,7 @@
         }
 
         function throwConfetti(count) {
-            const colors = ['#ff0a54', '#ffd166', '#06d6a0', '#118ab2', '#ff477e'];
+            const colors = ['#ff0a54', '#ffd166', '#06d6a0', '#118ab2', '#ff477e', '#fff'];
             const container = document.getElementById('dark-room');
             for(let i=0; i<count; i++) {
                 let c = document.createElement('div');
@@ -404,6 +441,21 @@
                 c.style.animationDuration = (2 + Math.random() * 3) + 's';
                 c.style.animationDelay = (Math.random() * 1.5) + 's';
                 container.appendChild(c);
+            }
+        }
+
+        function createSparkles(count) {
+            const container = document.getElementById('dark-room');
+            const cakeBox = document.getElementById('cake-box');
+            for(let i=0; i<count; i++) {
+                let s = document.createElement('div');
+                s.className = 'sparkle';
+                s.innerText = '✨';
+                // Spread sparkles around the cake area
+                s.style.left = (50 + (Math.random() * 40 - 20)) + 'vw';
+                s.style.top = (50 + (Math.random() * 40 - 20)) + 'vh';
+                s.style.animationDelay = (Math.random() * 2) + 's';
+                container.appendChild(s);
             }
         }
 
