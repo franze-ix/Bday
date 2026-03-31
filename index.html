@@ -6,7 +6,7 @@
     <title>Happy Birthday Prinsu ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- GLOBAL STYLES & LOVE THEME --- */
+        /* --- GLOBAL STYLES --- */
         body, html {
             margin: 0; padding: 0;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
@@ -15,75 +15,116 @@
             color: #4a4a4a; font-family: 'Poppins', sans-serif;
             overflow-x: hidden; scroll-behavior: smooth;
         }
-
         body.locked { overflow-y: hidden; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 600; color: #ff0054; margin-bottom: 15px; }
-        
-        .floater {
-            position: fixed; opacity: 0.25; z-index: 0; pointer-events: none;
-            animation: floatUp infinite linear;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(110vh) scale(0.8) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.4; }
-            80% { opacity: 0.4; }
-            100% { transform: translateY(-20vh) scale(1.2) rotate(25deg); opacity: 0; }
-        }
 
-        /* --- INTRO SCREEN --- */
-        #intro-screen {
-            height: 100%; width: 100vw; 
-            display: flex; flex-direction: column;
+        /* --- THE NEW INTERACTIVE INTRO SCREEN --- */
+        #dark-room {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100%;
+            background-color: #050505; /* Pitch Black */
+            z-index: 9999; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; text-align: center;
-            position: fixed; top: 0; left: 0; z-index: 9999; 
+            transition: background-color 2s ease-in-out, transform 1.2s ease-in-out;
+            overflow: hidden; padding: 20px; box-sizing: border-box;
+        }
+        #dark-room.lights-on {
             background: linear-gradient(135deg, #fff0f3 0%, #ffb3c6 100%);
-            transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding: 20px; box-sizing: border-box;
         }
 
-        .profile-pic {
-            width: 200px; height: 200px; border-radius: 50%; object-fit: cover;
-            border: 8px solid white; box-shadow: 0 15px 40px rgba(255, 77, 109, 0.4);
-            margin-bottom: 25px;
+        /* 1. Bunting / Toran */
+        #bunting {
+            position: absolute; top: 30px; width: 100%; max-width: 600px;
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; 
+            opacity: 0; transition: opacity 1s ease; z-index: 10001;
         }
-
-        /* --- THE FLOW SECTIONS --- */
-        #flow-container { display: none; padding-top: 60px; padding-bottom: 500px; } 
-
-        .section {
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            padding: 80px 10px; min-height: 80vh; position: relative; z-index: 10;
+        .pennant {
+            width: 32px; height: 45px; background: #ff4d6d; color: white; font-weight: bold; font-size: 20px;
+            display: flex; justify-content: center; padding-top: 5px; box-sizing: border-box;
+            clip-path: polygon(0 0, 100% 0, 50% 100%); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            animation: swing 2s infinite ease-in-out alternate; transform-origin: top;
         }
+        .pennant:nth-child(even) { background: #ff0054; animation-delay: 0.5s; }
+        .space { width: 15px; } /* Space between words */
+        @keyframes swing { 0% { transform: rotate(10deg); } 100% { transform: rotate(-10deg); } }
 
-        .content-box {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 35px 30px; border-radius: 25px; width: 85%; max-width: 500px; 
-            box-shadow: 0 15px 40px rgba(255, 77, 109, 0.2);
-            border-left: 8px solid #ff4d6d; margin-bottom: 30px; 
-            margin-left: auto; margin-right: auto; 
+        /* 2. Balloons */
+        .balloon {
+            width: 50px; height: 65px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            position: absolute; bottom: -100px; opacity: 0.85; z-index: 10000;
+            animation: floatUp ease-in forwards;
         }
-
-        p { font-size: 22px; line-height: 1.7; margin-bottom: 25px; margin-top: 0; }
-        .highlight { color: #ff4d6d; font-weight: bold; }
-
-        .reveal-text {
-            opacity: 0; transform: translateY(50px) scale(0.95);
-            transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+        .balloon::after {
+            content: ""; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            width: 2px; height: 40px; background: rgba(0,0,0,0.2);
         }
-        .reveal-text.visible { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes floatUp { 0% { bottom: -100px; transform: translateX(0) rotate(0deg); } 100% { bottom: 120vh; transform: translateX(30px) rotate(15deg); } }
+
+        /* 3. Cake & Candle */
+        .cake-container {
+            position: relative; opacity: 0; transform: scale(0.5); 
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); z-index: 10002; margin-top: 20px;
+        }
+        .cake-container.show { opacity: 1; transform: scale(1); }
+        .cake-emoji { font-size: 130px; margin: 0; line-height: 1; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2)); }
+        .flame {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            font-size: 45px; opacity: 0; transition: opacity 1s ease;
+            animation: flicker 0.5s infinite alternate;
+        }
+        @keyframes flicker { 0% { transform: translateX(-50%) scale(1); opacity: 0.8; } 100% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
+
+        /* 4. Confetti */
+        .confetti {
+            position: absolute; width: 10px; height: 10px; top: -20px; z-index: 10003;
+            animation: fall linear forwards;
+        }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+
+        /* Final Intro Action */
+        #final-intro-action {
+            opacity: 0; transition: opacity 1s ease; z-index: 10005; margin-top: 40px;
+        }
 
         /* --- BUTTONS --- */
         button {
             padding: 18px 40px; font-size: 22px; border: none; border-radius: 50px;
             cursor: pointer; font-weight: bold; transition: all 0.3s ease;
-            font-family: 'Poppins', sans-serif; margin: 15px; z-index: 100;
+            font-family: 'Poppins', sans-serif; margin: 15px; z-index: 10005; position: relative;
         }
         .primary-btn { background: #ff4d6d; color: white; box-shadow: 0 8px 25px rgba(255, 77, 109, 0.5); }
         .primary-btn:hover { background: #ff0054; transform: scale(1.08); }
         .secondary-btn { background: white; color: #ff4d6d; border: 3px solid #ff4d6d; }
         .secondary-btn:hover { background: #fff0f3; transform: scale(1.08); }
+
+        /* General Floaters for the rest of the site */
+        .floater {
+            position: fixed; opacity: 0.25; z-index: 0; pointer-events: none;
+            animation: backgroundFloat infinite linear;
+        }
+        @keyframes backgroundFloat {
+            0% { transform: translateY(110vh) scale(0.8) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.4; } 80% { opacity: 0.4; }
+            100% { transform: translateY(-20vh) scale(1.2) rotate(25deg); opacity: 0; }
+        }
+
+        /* --- THE FLOW SECTIONS (Main Letter) --- */
+        #flow-container { display: none; padding-top: 60px; padding-bottom: 500px; } 
+        .section {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            text-align: center; padding: 80px 10px; min-height: 80vh; position: relative; z-index: 10;
+        }
+        .content-box {
+            background: rgba(255, 255, 255, 0.95); padding: 35px 30px; border-radius: 25px; 
+            width: 85%; max-width: 500px; box-shadow: 0 15px 40px rgba(255, 77, 109, 0.2);
+            border-left: 8px solid #ff4d6d; margin-bottom: 30px; margin-left: auto; margin-right: auto; 
+        }
+        p { font-size: 22px; line-height: 1.7; margin-bottom: 25px; margin-top: 0; }
+        .highlight { color: #ff4d6d; font-weight: bold; }
+        .reveal-text {
+            opacity: 0; transform: translateY(50px) scale(0.95); transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .reveal-text.visible { opacity: 1; transform: translateY(0) scale(1); }
 
         #music-btn {
             position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9);
@@ -100,7 +141,7 @@
             opacity: 0; transition: 0.8s; border: 2px solid #ffccd5;
         }
 
-        /* --- REPLY BOX & SHAKE --- */
+        /* --- REPLY BOX & SUCCESS SCREEN --- */
         .reply-box {
             background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 2px solid #ffccd5;
             margin: 20px auto; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15);
@@ -117,44 +158,25 @@
         }
         .shake-error { animation: shake 0.5s ease-in-out; background-color: #ff0000 !important; }
 
-        /* --- UPDATED SUCCESS SCREEN (SCROLLABLE FOR MOBILE) --- */
         #success-screen {
-            display: none; 
-            width: 100vw; 
-            height: 100%; 
-            flex-direction: column; 
-            justify-content: flex-start; /* THIS UNLOCKS THE SCROLLING */
-            align-items: center; 
-            text-align: center;
+            display: none; width: 100vw; height: 100%; flex-direction: column; 
+            justify-content: flex-start; align-items: center; text-align: center;
             position: fixed; top: 0; left: 0; z-index: 10000;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
-            padding: 40px 15px 150px 15px; 
-            box-sizing: border-box; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
+            padding: 40px 15px 150px 15px; box-sizing: border-box; 
+            overflow-y: auto; -webkit-overflow-scrolling: touch; 
         }
-
-        #main-success-content, #post-reply-screen {
-            margin-top: auto; 
-            margin-bottom: auto; 
-            width: 100%;
-            max-width: 600px;
-        }
-
+        #main-success-content, #post-reply-screen { margin-top: auto; margin-bottom: auto; width: 100%; max-width: 600px; }
         #post-reply-screen { display: none; }
 
-        /* --- MOBILE PERFECT SIZING FIX --- */
         @media (max-width: 600px) {
-            .profile-pic { width: 150px; height: 150px; }
-            #intro-screen h1 { font-size: 28px; }
-            #intro-screen p { font-size: 16px; }
+            .pennant { width: 22px; height: 32px; font-size: 14px; padding-top: 3px; }
+            .space { width: 8px; }
+            .cake-emoji { font-size: 100px; }
+            .flame { font-size: 35px; top: -10px; }
+            button.primary-btn, button.secondary-btn { padding: 12px 25px; font-size: 18px; margin: 10px; }
             p { font-size: 18px; }
             .content-box { width: 90%; padding: 25px 20px; }
-            
-            #success-screen h1 { font-size: 36px; margin-top: 20px; }
-            .reply-box { padding: 15px; width: 95%; margin-top: 10px; }
-            textarea { height: 90px; font-size: 16px; margin-bottom: 10px; }
-            button.primary-btn, button.secondary-btn { padding: 12px 25px; font-size: 18px; margin: 10px; }
         }
     </style>
 </head>
@@ -170,26 +192,39 @@
     <div class="floater" style="left: 40%; font-size: 40px; animation-duration: 12s; animation-delay: 5s;">💕</div>
     <div class="floater" style="left: 60%; font-size: 50px; animation-duration: 16s; animation-delay: 1s;">🦋</div>
     <div class="floater" style="left: 75%; font-size: 60px; animation-duration: 20s; animation-delay: 4s;">💖</div>
-    <div class="floater" style="left: 85%; font-size: 35px; animation-duration: 13s; animation-delay: 7s;">🦋</div>
 
-    <div id="intro-screen">
-        <img src="photo.jpg" alt="Priyal" class="profile-pic" onerror="this.style.display='none'">
-        <h1>Happy Birthday Priyal! 🎂</h1>
-        <p style="max-width: 90%;">
-            Happpiest Birthday dear Prinsu! ✨ <br><br>
-            Enjoy your special day as you wish. I hope today brings you as much joy as your smile brings to me everyday.
-        </p>
-        <p style="font-style: italic; color: #ff0054;">
-            I have Something for  you... Please open this once, tap to open !!!
-        </p>
-        <button class="primary-btn" onclick="startFlow()">Open this BOX🎁</button>
+    <div id="dark-room">
+        <div id="bunting">
+            <div class="pennant">H</div><div class="pennant">A</div><div class="pennant">P</div><div class="pennant">P</div><div class="pennant">Y</div>
+            <div class="space"></div>
+            <div class="pennant">B</div><div class="pennant">D</div><div class="pennant">A</div><div class="pennant">Y</div>
+            <div class="space"></div>
+            <div class="pennant">P</div><div class="pennant">R</div><div class="pennant">I</div><div class="pennant">Y</div><div class="pennant">A</div><div class="pennant">L</div>
+        </div>
+
+        <button id="light-btn" class="secondary-btn" onclick="turnOnLights()">Turn On Lights 💡</button>
+        <button id="start-music-btn" class="primary-btn" style="display:none;" onclick="startIntroSequence()">Start Music 🎵</button>
+
+        <div id="cake-box" class="cake-container">
+            <div id="candle-flame" class="flame">🔥</div>
+            <div class="cake-emoji">🎂</div>
+        </div>
+
+        <div id="final-intro-action">
+            <p style="font-size: 18px; font-style: italic; color: #ff0054; margin-bottom: 10px;">
+                I have something for you... please open this once.
+            </p>
+            <button class="primary-btn" onclick="startFlow()">Tap to open 🎁</button>
+        </div>
     </div>
-
     <div id="flow-container">
         <div class="section">
             <div class="content-box">
                 <h2 class="reveal-text" style="font-size: 38px;">My Wishes for You...</h2>
                 <p class="reveal-text">On this day of joy and cheer, dear Priyal, 🎉<br>A candle glows brighter for your lovely smile. 🌟</p>
+                <p class="reveal-text">Through every season, you're a guiding light, 🌼<br>With heart so gentle, yet spirit bright. 🌈</p>
+                <p class="reveal-text">May laughter dance in your eyes so true, 😊<br>As dreams unfurl and skies turn blue. 🌌</p>
+                <p class="reveal-text">Your journey's path is filled with grace, 🌺<br>Each moment treasured, you lovingly embrace. 💖</p>
                 <p class="reveal-text">Happy birthday to you, with heartfelt delight, 🎂<br>May your world be magical, day and night. ✨</p>
             </div>
             <p class="reveal-text" style="font-size: 18px; color: #888; margin-top: 40px;">(Scroll down slowly... 👇)</p>
@@ -202,69 +237,68 @@
 
         <div class="section">
             <div class="content-box">
-                <h2 class="reveal-text" style="font-size: 40px;">Hyy Prieeyal... ❤️</h2>
+                <h2 class="reveal-text" style="font-size: 40px;">Hey Priyee... ❤️</h2>
+                <p class="reveal-text">Hey Priyal... Kevi che?</p>
                 <p class="reveal-text">Khabar nathi aa vaat kevi rite saru karu, pan have badhu dil ma rakhi shakay tem nathi.</p>
-                <p class="reveal-text">Me tane 11th na starting  ma first time joy hati.E time mane taru name pan nati khabr , </p>
-                <p class="reveal-text"> Pachhi taru name and class janva malyu pachhi roj tu jova male eno j wait karto! ema j 11th puru thai gyu.</p>   
+                <p class="reveal-text">Aapni aa safar 11th standard na school na divaso thi saru thai hati. Tyare mari pase tari sathe vaat karvani himmat j nati, and na koi contact karvani.</p>
             </div>
         </div>
 
         <div class="section">
             <div class="content-box" style="border-left-color: #ff0054;">
-                <p class="reveal-text">Std 12 ma to apna class pan same thai gya hata ,e apno 12th no<span class="highlight">'Sidharth' class</span>. </p>
-                 <p class="reveal-text">Tari sathe vat kris ek var avu vichryu hatu but Dhire dhire 12 th pan puru thai gyu ...</p>
-                <p class="reveal-text">School na last day par... Me last time tane joy hati. Mane andar thi darr hato kem k hu tane life ma pachhi kyarey nahi joi shaku.</p>
+                <p class="reveal-text">Mane aaje pan yaad che aapno 12th no <span class="highlight">'Sidharth' class</span>.</p>
+                <p class="reveal-text">Me tya tane ketli vaar bas joi j che, pan kyarey aagal aavi ne vaat karvani himmat j na thai.</p>
+                <p class="reveal-text">Tu kadach mane olakhati pan nai hoy shayad, and me kyarey approach na karyo. Etle aa badhi memories bas mari ekla ni side thi j hati.</p>
                 <p class="reveal-text">Mane lagyu k "I will move on easily", but e school ni yaado kyarey bhulati j nathi.</p>
             </div>
         </div>
 
-
-                  <div class="section">
+        <div class="section">
             <div class="content-box">
-                <p class="reveal-text">Hu tane like karto hato but tane kyarey kidhu j nathi ... </p>
-                <p class="reveal-text"> But have eno afsos karvathi kai nai thay e mane khabr chhe </p>
-                <p class="reveal-text"> And thank you for coming  in my life because <span class="highlight">
-                                    "you are  the girl that one's i loved with every piece of my heart, 
-                                        you taought me what loves feel like beautifull ..." </span>.</p>
+                <p class="reveal-text">Reject thava na dar thi me koi diwas try j na karyo.</p>
+                <p class="reveal-text">School na last day par... hu sach ma bau emotional hato. Mane andar thi darr hato ke kachach hu tane life ma pachi kyarey nahi joi shaku.</p>
+                <p class="reveal-text">Pan aaje tari birthday par mane thayu ke, 'Na' sambhalva karta, 'Kaya vagar rehva' no afsos bau moto che.</p>
             </div>
         </div>
 
         <div class="section">
             <div class="content-box glow-box">
                 <p class="reveal-text" style="font-size: 26px; font-weight: bold; color: #ff0054; line-height: 1.6; text-align: center;">
-                    "a badhi vat kai ne hu koi expectation nathi rakhto tarathi<br><br>
+                    "Me tane varsho thi moun (silence) ma love karyo chhe... <br><br>
+                    Mane bas em hatu ke tane khabar hoy ke hu tane aaje pan eklo j prem karu chu."
                 </p>
-                 <p class="reveal-text" style="font-size: 26px; font-weight: bold; color: #ff0054; line-height: 1.6; text-align: center;">
-                     Hu tari pase koi commitment ke relationship nathi mangto. Bas mara man no bhar halko karvo hato.
-                 </p>
-
             </div>
         </div>
 
-      
+        <div class="section">
+            <div class="content-box">
+                <p class="reveal-text">Hu tari pase koi commitment ke relationship nathi mangto. Bas mara dil no ek bhar halko karvo hato.</p>
+                <p class="reveal-text">16 varsh ni umar thi laine aaje college na second year sudhi, me tane hamesha mari <span class="highlight">'favorite person'</span> mani che.</p>
+            </div>
+        </div>
+
         <div class="section" style="min-height: 80vh;">
-            <h2 class="reveal-text" style="font-size: 42px; color: #ff0054; margin-bottom: 50px;">Do you like this ? ❤️</h2>
+            <h2 class="reveal-text" style="font-size: 42px; color: #ff0054; margin-bottom: 50px;">Do you like my gift, Prinsu? 🥺❤️</h2>
             <div style="display: flex; gap: 20px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap;">
-                <button class="primary-btn reveal-text" onclick="showSuccess('Saras Lagyu ✨')"> GOOD ✨</button>
-                <button class="secondary-btn reveal-text" onclick="showSuccess('Bau j mast che! ❤️')"> NICE efforts ! ❤️</button>
+                <button class="primary-btn reveal-text" onclick="showSuccess('Saras Lagyu ✨')">Saras Lagyu ✨</button>
+                <button class="secondary-btn reveal-text" onclick="showSuccess('Bau j mast che! ❤️')">Bau j mast che! ❤️</button>
             </div>
         </div>
     </div>
 
     <div id="success-screen">
         <div id="main-success-content">
-            <h1 style="font-size: 45px;">Thank you for liking this 🎉❤️</h1>
-            <p style="font-size: 30px; max-width: 100%; line-height: 1.5; margin-top: 15px;">
-                And mari vat nu kai khotu lagyu hoy to e mate dil thi soryy !! hu tane hurt karva nathi mangto.
+            <h1 style="font-size: 45px;">You made me the happiest guy! 🎉❤️</h1>
+            <p style="font-size: 20px; max-width: 100%; line-height: 1.5; margin-top: 15px;">
+                Thank you for liking my gift! Knowing my feelings reached your heart makes this the best birthday ever.
             </p>
 
             <div class="reply-box" id="reply-box">
                 <p style="font-size: 16px; font-weight: bold; color: #ff0054; margin-bottom: 10px;">
-                   Tare Kai kevu hoy to ahiya lakhi shake chhe... 💌
+                    Tari dil ni koi vaat kevi hoy toh ahiya lakhi shake che... 💌
                 </p>
                 <form id="reply-form">
                     <input type="hidden" id="gift-opinion" name="Button_Clicked" value="">
-
                     <textarea id="reply-text" name="Prinsu_Message" placeholder="Type your message here..."></textarea>
                     <button type="submit" id="send-btn" class="primary-btn">Send Reply ✨</button>
                 </form>
@@ -273,7 +307,7 @@
 
         <div id="post-reply-screen">
             <h2 class="reveal-text" style="font-size: 34px; color: #ff0054; margin-bottom: 20px;">Thank you so much for the reply! ❤️</h2>
-            <p class="reveal-text" style="font-size: 22px;">Once again, Happy Birthday to you ! 🎂</p>
+            <p class="reveal-text" style="font-size: 22px;">Once again, Happy Birthday Prinsu! 🎂</p>
             <p class="reveal-text" style="font-size: 22px;">Best of luck for your life ahead. ✨</p>
             <p class="reveal-text" style="font-size: 45px; font-weight: bold; color: #ff4d6d; margin-top: 30px;">Byyy! 👋</p>
         </div>
@@ -282,15 +316,90 @@
     <script>
         const music = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         let chatTriggered = false;
 
-        function startFlow() {
+        // --- NEW INTRO ORCHESTRATION ---
+
+        function turnOnLights() {
+            document.getElementById('light-btn').style.display = 'none';
+            document.getElementById('dark-room').classList.add('lights-on');
+            
+            // Wait 1 second for lights to fade in, then show music button
+            setTimeout(() => {
+                const mBtn = document.getElementById('start-music-btn');
+                mBtn.style.display = 'block';
+                mBtn.style.opacity = '0';
+                mBtn.style.transition = 'opacity 1s';
+                setTimeout(() => mBtn.style.opacity = '1', 100);
+            }, 1000);
+        }
+
+        async function startIntroSequence() {
+            document.getElementById('start-music-btn').style.display = 'none';
+            
+            // 1. Start Music
             music.volume = 0.6;
             music.play().catch(e => console.log("Audio play blocked"));
             musicBtn.style.display = 'block';
-            const intro = document.getElementById('intro-screen');
+
+            // 2. Drop Banner
+            await sleep(800);
+            document.getElementById('bunting').style.opacity = '1';
+
+            // 3. Release Balloons
+            await sleep(1000);
+            createBalloons(25);
+
+            // 4. Show Cake
+            await sleep(2500);
+            document.getElementById('cake-box').classList.add('show');
+
+            // 5. Light Candle
+            await sleep(1500);
+            document.getElementById('candle-flame').style.opacity = '1';
+
+            // 6. Confetti Explosion
+            await sleep(1000);
+            throwConfetti(100);
+
+            // 7. Show Final Button
+            await sleep(3000);
+            document.getElementById('final-intro-action').style.opacity = '1';
+        }
+
+        function createBalloons(count) {
+            const colors = ['#ff0a54', '#ff477e', '#ff85a1', '#fbb1bd', '#f9bec7'];
+            const container = document.getElementById('dark-room');
+            for(let i=0; i<count; i++) {
+                let b = document.createElement('div');
+                b.className = 'balloon';
+                b.style.background = colors[Math.floor(Math.random() * colors.length)];
+                b.style.left = Math.random() * 90 + 'vw';
+                b.style.animationDuration = (4 + Math.random() * 4) + 's';
+                b.style.animationDelay = (Math.random() * 2) + 's';
+                container.appendChild(b);
+            }
+        }
+
+        function throwConfetti(count) {
+            const colors = ['#ff0a54', '#ffd166', '#06d6a0', '#118ab2', '#ff477e'];
+            const container = document.getElementById('dark-room');
+            for(let i=0; i<count; i++) {
+                let c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.animationDuration = (2 + Math.random() * 3) + 's';
+                c.style.animationDelay = (Math.random() * 1.5) + 's';
+                container.appendChild(c);
+            }
+        }
+
+        // --- TRANSITION TO MAIN LETTER ---
+        function startFlow() {
+            const intro = document.getElementById('dark-room');
             intro.style.transform = 'translateY(-100vh)';
-            intro.style.opacity = '0';
             setTimeout(() => {
                 intro.style.display = 'none';
                 document.getElementById('flow-container').style.display = 'block';
@@ -299,11 +408,13 @@
             }, 1200);
         }
 
+        // --- MUSIC BUTTON LOGIC ---
         function toggleMusic() {
             if (music.paused) { music.play(); musicBtn.innerText = '🎵'; } 
             else { music.pause(); musicBtn.innerText = '🔇'; }
         }
 
+        // --- SCROLL ANIMATIONS ---
         const observer = new IntersectionObserver((entries) => {
             let delay = 0; 
             entries.forEach(entry => {
@@ -317,7 +428,7 @@
 
         document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
 
-        // RESTORED CHAT SIMULATION LOGIC
+        // --- CHAT SIMULATION LOGIC ---
         const chatObserver = new IntersectionObserver((entries) => {
             if(entries[0].isIntersecting && !chatTriggered) {
                 chatTriggered = true;
@@ -328,12 +439,9 @@
 
         async function runChatSimulation() {
             const chatBox = document.getElementById('chat-box');
-            const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
             const createBubble = (text) => {
                 const b = document.createElement('div');
-                b.className = 'chat-bubble';
-                b.innerText = text;
+                b.className = 'chat-bubble'; b.innerText = text;
                 chatBox.appendChild(b);
                 setTimeout(() => b.style.opacity = '1', 100);
                 return b;
@@ -341,27 +449,25 @@
 
             await sleep(1500);
             let b1 = createBubble('Hi Priyal...');
-            await sleep(1500);
+            await sleep(2500);
             b1.style.opacity = '0'; setTimeout(() => b1.remove(), 800);
 
             await sleep(1500);
             let b2 = createBubble('I wanted to tell you something...');
-            await sleep(2000);
+            await sleep(2500);
             b2.style.opacity = '0'; setTimeout(() => b2.remove(), 800);
 
             await sleep(2000);
-            createBubble('so please read this ones , in this  no any intention behind it or no any any expectation from you ');
+            createBubble('So I never said anything until today...');
         }
 
-        // NEW LOGIC: Store Button Choice & Show Success Screen
+        // --- SUCCESS & FORMSPREE LOGIC ---
         function showSuccess(buttonChoice) {
-            // Saves which button she clicked into the hidden input for Formspree
             document.getElementById('gift-opinion').value = buttonChoice; 
-            
             document.getElementById('flow-container').style.display = 'none';
             document.body.classList.add('locked'); 
             const success = document.getElementById('success-screen');
-            success.style.display = 'flex'; // Unlocks mobile scrolling
+            success.style.display = 'flex'; 
             window.scrollTo(0, 0);
         }
 
