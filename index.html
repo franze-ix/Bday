@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday Prinsu ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         /* --- GLOBAL STYLES --- */
         body, html {
             margin: 0; padding: 0;
-            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
-            background-attachment: fixed; 
+            background: #fff0f3; /* Fallback */
             min-height: 100%; 
             color: #4a4a4a; font-family: 'Poppins', sans-serif;
             overflow-x: hidden; scroll-behavior: smooth;
@@ -18,30 +18,54 @@
         body.locked { overflow-y: hidden; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 600; color: #ff0054; margin-bottom: 15px; }
 
+        /* --- ADVANCED AMBIENT BACKGROUND ORBS --- */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -2; overflow: hidden; pointer-events: none;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
+        }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            opacity: 0.6; animation: floatOrb 25s infinite alternate ease-in-out;
+        }
+        .orb-1 { width: 400px; height: 400px; background: #ff4d6d; top: -10%; left: -10%; }
+        .orb-2 { width: 500px; height: 500px; background: #ffb703; bottom: -20%; right: -10%; animation-delay: -5s; }
+        .orb-3 { width: 350px; height: 350px; background: #ff0054; top: 40%; left: 60%; animation-delay: -10s; }
+        
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(15vw, 15vh) scale(1.2); }
+            100% { transform: translate(-10vw, 20vh) scale(0.9); }
+        }
+
+        /* --- MAGIC CURSOR CANVAS --- */
+        #magic-cursor {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 99998;
+        }
+
         /* --- THE INTERACTIVE SURPRISE INTRO --- */
         #dark-room {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100%;
-            background-color: #050505; /* Pitch Black */
+            background-color: #050505; 
             z-index: 9999; display: flex; flex-direction: column; 
-            /* Changed to flex-start and added top padding to prevent overlap with the banner */
             justify-content: flex-start; align-items: center; text-align: center;
-            transition: background-color 2s ease-in-out, transform 1.2s ease-in-out;
+            transition: background-color 2.5s ease-in-out, transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.2s ease;
             overflow-y: auto; overflow-x: hidden; 
             padding: 200px 20px 50px 20px; box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
         #dark-room.lights-on {
-            background: linear-gradient(135deg, #fff0f3 0%, #ffb3c6 100%);
+            background-color: transparent; /* Lets the ambient orbs show through */
         }
 
-        /* --- NEW: Absolutely Centered Initial Buttons --- */
         #intro-btn-container {
             position: absolute; top: 50%; left: 50%; 
             transform: translate(-50%, -50%);
             z-index: 10020; width: 100%; text-align: center;
         }
 
-        /* 1. Advanced Bunting / Toran */
+        /* Bunting */
         #bunting {
             position: absolute; top: -150px; 
             width: 100%; max-width: 800px; left: 50%; transform: translateX(-50%);
@@ -49,12 +73,9 @@
             transition: top 1.5s cubic-bezier(0.25, 1, 0.5, 1); z-index: 10001;
         }
         #bunting.drop { top: 20px; } 
-        
         .bunting-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        
         .pennant {
-            width: 42px; height: 58px; 
-            background: linear-gradient(135deg, #ff4d6d, #ff0054);
+            width: 42px; height: 58px; background: linear-gradient(135deg, #ff4d6d, #ff0054);
             color: white; font-weight: bold; font-size: 26px;
             display: flex; justify-content: center; align-items: flex-start; padding-top: 8px; box-sizing: border-box;
             clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%); 
@@ -63,68 +84,36 @@
             border-top: 3px solid #ffccd5; 
         }
         .pennant:nth-child(even) { background: linear-gradient(135deg, #ff0054, #c9184a); animation-delay: 0.4s; }
-        
-        .highlight-pennant { 
-            background: linear-gradient(135deg, #ffb703, #fb8500) !important; 
-            font-size: 32px; width: 48px; height: 65px; 
-        }
+        .highlight-pennant { background: linear-gradient(135deg, #ffb703, #fb8500) !important; font-size: 32px; width: 48px; height: 65px; }
         .space { width: 15px; } 
         @keyframes swing { 0% { transform: rotate(8deg); } 100% { transform: rotate(-8deg); } }
 
-        /* 2. Intro Wish Text (Above Cake) */
-        #intro-wish-text {
-            opacity: 0; transform: translateY(20px); 
-            transition: all 1.5s ease; z-index: 10002; 
-            margin-bottom: 30px;
-        }
+        /* Intro Elements */
+        #intro-wish-text { opacity: 0; transform: translateY(20px); transition: all 1.5s ease; z-index: 10002; margin-bottom: 30px; }
         #intro-wish-text p {
-            font-size: 20px; font-weight: 600; color: #ff0054; max-width: 90%; 
-            margin: 0 auto; text-shadow: 0 2px 10px rgba(255,255,255,0.8);
-            line-height: 1.6; background: rgba(255,255,255,0.6); padding: 15px 25px; border-radius: 20px;
+            font-size: 20px; font-weight: 600; color: #ff0054; max-width: 90%; margin: 0 auto; 
+            text-shadow: 0 2px 10px rgba(255,255,255,0.8); line-height: 1.6; background: rgba(255,255,255,0.7); 
+            padding: 15px 25px; border-radius: 20px; backdrop-filter: blur(5px);
         }
 
-        /* 3. Cake & Candle */
-        .cake-container {
-            position: relative; opacity: 0; transform: scale(0.5); 
-            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); z-index: 10002;
-        }
+        .cake-container { position: relative; opacity: 0; transform: scale(0.5); transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); z-index: 10002; }
         .cake-container.show { opacity: 1; transform: scale(1); }
         .cake-emoji { font-size: 130px; margin: 0; line-height: 1; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2)); }
         
-        .flame {
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-            font-size: 45px; opacity: 0; transition: opacity 1s ease;
-            animation: flicker 0.5s infinite alternate;
-        }
+        .flame { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 45px; opacity: 0; transition: opacity 1s ease; animation: flicker 0.5s infinite alternate; }
         @keyframes flicker { 0% { transform: translateX(-50%) scale(1); opacity: 0.8; } 100% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
+        .cake-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%); border-radius: 50%; opacity: 0; transition: opacity 2s ease; z-index: -1; }
 
-        .cake-glow {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%);
-            border-radius: 50%; opacity: 0; transition: opacity 2s ease; z-index: -1;
-        }
-
-        /* 4. Balloons & Confetti & Sparkles */
-        .balloon {
-            width: 50px; height: 65px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-            position: absolute; bottom: -100px; opacity: 0.85; z-index: 10000; animation: floatUp ease-in forwards;
-        }
-        .balloon::after {
-            content: ""; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
-            width: 2px; height: 40px; background: rgba(0,0,0,0.2);
-        }
+        .balloon { width: 50px; height: 65px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; position: absolute; bottom: -100px; opacity: 0.85; z-index: 10000; animation: floatUp ease-in forwards; }
+        .balloon::after { content: ""; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 2px; height: 40px; background: rgba(0,0,0,0.2); }
         @keyframes floatUp { 0% { bottom: -100px; transform: translateX(0) rotate(0deg); } 100% { bottom: 120vh; transform: translateX(30px) rotate(15deg); } }
-
-        .confetti { position: absolute; width: 10px; height: 10px; top: -20px; z-index: 10003; animation: fall linear forwards; }
-        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
 
         .sparkle { position: absolute; font-size: 20px; color: gold; z-index: 10004; opacity: 0; animation: twinkle 1.5s ease-in-out forwards; }
         @keyframes twinkle { 0% { opacity: 0; transform: scale(0.5) rotate(0deg); } 50% { opacity: 1; transform: scale(1.5) rotate(180deg); } 100% { opacity: 0; transform: scale(0.5) rotate(360deg); } }
 
-        /* Final Intro Action */
         #final-intro-action { opacity: 0; transition: opacity 1s ease; z-index: 10005; margin-top: 30px; margin-bottom: 50px; }
 
-        /* --- BUTTONS --- */
+        /* Buttons */
         button {
             padding: 18px 40px; font-size: 22px; border: none; border-radius: 50px;
             cursor: pointer; font-weight: bold; transition: all 0.3s ease;
@@ -135,76 +124,68 @@
         .secondary-btn { background: white; color: #ff4d6d; border: 3px solid #ff4d6d; }
         .secondary-btn:hover { background: #fff0f3; transform: scale(1.08); }
 
-        #music-btn {
-            position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #ff4d6d; color: #ff4d6d; border-radius: 50%;
-            width: 55px; height: 55px; cursor: pointer; display: none; font-size: 24px;
-            z-index: 99999; touch-action: manipulation; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
+        #music-btn { position: fixed; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); border: 2px solid #ff4d6d; color: #ff4d6d; border-radius: 50%; width: 55px; height: 55px; cursor: pointer; display: none; font-size: 24px; z-index: 99999; touch-action: manipulation; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
-        /* General Background Floaters */
-        .floater {
-            position: fixed; opacity: 0.25; z-index: 0; pointer-events: none; animation: backgroundFloat infinite linear;
-        }
+        /* Floating Background Emojis */
+        .floater { position: fixed; opacity: 0.25; z-index: -1; pointer-events: none; animation: backgroundFloat infinite linear; }
         @keyframes backgroundFloat {
-            0% { transform: translateY(110vh) scale(0.8) rotate(0deg); opacity: 0; }
+            0% { transform: translateY(110vh) scale(0.8) rotate3d(1, 1, 1, 0deg); opacity: 0; }
             20% { opacity: 0.4; } 80% { opacity: 0.4; }
-            100% { transform: translateY(-20vh) scale(1.2) rotate(25deg); opacity: 0; }
+            100% { transform: translateY(-20vh) scale(1.4) rotate3d(1, 1, 1, 360deg); opacity: 0; }
         }
 
         /* --- THE FLOW SECTIONS (Main Letter) --- */
-        #flow-container { display: none; padding-top: 60px; padding-bottom: 500px; } 
-        .section {
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            text-align: center; padding: 80px 10px; min-height: 80vh; position: relative; z-index: 10;
-        }
+        #flow-container { display: none; padding-top: 60px; padding-bottom: 500px; position: relative; z-index: 10;} 
+        .section { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px 10px; min-height: 80vh; position: relative; }
         .content-box {
-            background: rgba(255, 255, 255, 0.95); padding: 35px 30px; border-radius: 25px; 
-            width: 85%; max-width: 500px; box-shadow: 0 15px 40px rgba(255, 77, 109, 0.2);
-            border-left: 8px solid #ff4d6d; margin-bottom: 30px; margin-left: auto; margin-right: auto; 
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 35px 30px; border-radius: 25px; width: 85%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.4); border-left: 8px solid #ff4d6d; margin-bottom: 30px; margin-left: auto; margin-right: auto; 
+            transform-style: preserve-3d; 
         }
-        .glow-box {
-            background: #fff0f3; border: 2px solid #ffb3c6; border-left: 10px solid #ff0054;
-            animation: pulseGlow 3s infinite alternate;
-        }
-        @keyframes pulseGlow { 0% { box-shadow: 0 10px 30px rgba(255, 0, 84, 0.2); } 100% { box-shadow: 0 15px 50px rgba(255, 0, 84, 0.5); transform: scale(1.02); } }
+        .content-box > * { transform: translateZ(30px); }
+        .glow-box { background: rgba(255, 240, 243, 0.85); border-left: 10px solid #ff0054; animation: pulseGlow 3s infinite alternate; }
+        @keyframes pulseGlow { 0% { box-shadow: 0 10px 30px rgba(255, 0, 84, 0.15); } 100% { box-shadow: 0 15px 50px rgba(255, 0, 84, 0.4); transform: scale(1.02); } }
+        
         p { font-size: 22px; line-height: 1.7; margin-bottom: 25px; margin-top: 0; }
         .highlight { color: #ff4d6d; font-weight: bold; }
-        .reveal-text { opacity: 0; transform: translateY(50px) scale(0.95); transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
+        .reveal-text { opacity: 0; transform: translateY(50px) scale(0.95); transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1); }
         .reveal-text.visible { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* --- CHAT SIMULATION --- */
-        .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; min-height: 180px; margin-bottom: 30px;}
+        /* --- ADVANCED CHAT SIMULATION --- */
+        .chat-container { display: flex; flex-direction: column; align-items: center; gap: 15px; min-height: 250px; margin-bottom: 30px; width: 100%; max-width: 400px; }
         .chat-bubble {
-            background: white; color: #ff4d6d; padding: 15px 30px; border-radius: 35px; font-size: 20px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1); font-weight: 600; opacity: 0; transition: 0.8s; border: 2px solid #ffccd5; text-align: center;
+            background: rgba(255, 255, 255, 0.9); color: #ff4d6d; padding: 15px 25px; border-radius: 30px; font-size: 20px; 
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15); font-weight: 600; opacity: 0; transform: translateY(20px) scale(0.9); transition: 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
+            border: 2px solid #ffccd5; text-align: center; width: fit-content; max-width: 90%;
         }
+        .chat-bubble.show { opacity: 1; transform: translateY(0) scale(1); }
+        
+        /* Realistic Typing Dots */
+        .typing-indicator {
+            display: flex; gap: 6px; padding: 15px 25px; background: rgba(255, 255, 255, 0.9); border-radius: 30px; 
+            border: 2px solid #ffccd5; width: fit-content; margin: 0 auto;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.1); opacity: 0; transform: scale(0.9); transition: 0.3s;
+        }
+        .typing-indicator.show { opacity: 1; transform: scale(1); }
+        .typing-indicator span { width: 10px; height: 10px; background: #ff4d6d; border-radius: 50%; animation: typeBounce 1.4s infinite ease-in-out both; }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typeBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
         /* --- SUCCESS SCREEN --- */
-        .reply-box {
-            background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 2px solid #ffccd5;
-            margin: 20px auto; width: 90%; max-width: 450px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15);
-        }
-        textarea {
-            width: 100%; height: 120px; padding: 15px; border-radius: 15px; border: 2px solid #ffb3c6; 
-            font-family: 'Poppins', sans-serif; font-size: 18px; color: #4a4a4a; resize: none; 
-            box-sizing: border-box; margin-bottom: 15px; background: #fffafa;
-        }
+        .reply-box { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); margin: 20px auto; width: 90%; max-width: 450px; box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15); }
+        textarea { width: 100%; height: 120px; padding: 15px; border-radius: 15px; border: 2px solid #ffb3c6; font-family: 'Poppins', sans-serif; font-size: 18px; color: #4a4a4a; resize: none; box-sizing: border-box; margin-bottom: 15px; background: rgba(255, 250, 250, 0.9); transition: border-color 0.3s; }
+        textarea:focus { outline: none; border-color: #ff0054; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); } 20%, 40%, 60%, 80% { transform: translateX(8px); } }
-        .shake-error { animation: shake 0.5s ease-in-out; background-color: #ff0000 !important; }
+        .shake-error { animation: shake 0.5s ease-in-out; background-color: #ff0000 !important; color: white !important; }
 
-        #success-screen {
-            display: none; width: 100vw; height: 100%; flex-direction: column; justify-content: flex-start; 
-            align-items: center; text-align: center; position: fixed; top: 0; left: 0; z-index: 10000;
-            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%); padding: 40px 15px 150px 15px; 
-            box-sizing: border-box; overflow-y: auto; -webkit-overflow-scrolling: touch; 
-        }
+        #success-screen { display: none; width: 100vw; height: 100%; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; position: fixed; top: 0; left: 0; z-index: 10000; background-color: transparent; padding: 40px 15px 150px 15px; box-sizing: border-box; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         #main-success-content, #post-reply-screen { margin-top: auto; margin-bottom: auto; width: 100%; max-width: 600px; }
         #post-reply-screen { display: none; }
 
-        /* --- MOBILE PERFECT SIZING FIX --- */
         @media (max-width: 600px) {
-            #dark-room { padding-top: 170px; } /* Ensures safe space below banner */
+            #dark-room { padding-top: 170px; } 
             .pennant { width: 28px; height: 40px; font-size: 18px; padding-top: 5px; }
             .highlight-pennant { width: 32px; height: 46px; font-size: 22px; }
             .space { width: 8px; }
@@ -217,10 +198,19 @@
             #success-screen h1 { font-size: 36px; margin-top: 20px; }
             .reply-box { padding: 15px; width: 95%; margin-top: 10px; }
             textarea { height: 90px; font-size: 16px; margin-bottom: 10px; }
+            .orb { filter: blur(60px); }
         }
     </style>
 </head>
 <body class="locked">
+
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <canvas id="magic-cursor"></canvas>
 
     <audio id="bg-music" loop>
         <source src="music.mp3" type="audio/mpeg">
@@ -235,7 +225,6 @@
     <div class="floater" style="left: 85%; font-size: 35px; animation-duration: 13s; animation-delay: 7s;">🦋</div>
 
     <div id="dark-room">
-        
         <div id="bunting">
             <div class="bunting-row">
                 <div class="pennant">H</div><div class="pennant">A</div><div class="pennant">P</div><div class="pennant">P</div><div class="pennant">Y</div>
@@ -266,12 +255,13 @@
         </div>
 
         <div id="final-intro-action">
-            <p style="font-size: 18px; font-style: italic; color: #ff0054; margin-bottom: 10px; background: rgba(255,255,255,0.7); padding: 5px 15px; border-radius: 10px;">
+            <p style="font-size: 18px; font-style: italic; color: #ff0054; margin-bottom: 10px; background: rgba(255,255,255,0.7); padding: 5px 15px; border-radius: 10px; backdrop-filter: blur(5px);">
                 I have Something for you... Please open this once, tap to open !!!
             </p>
             <button class="primary-btn" onclick="startFlow()">Open this BOX 🎁</button>
         </div>
     </div>
+
     <div id="flow-container">
         <div class="section">
             <div class="content-box">
@@ -279,26 +269,27 @@
                 <p class="reveal-text">On this day of joy and cheer, dear Priyal, 🎉<br>A candle glows brighter for your lovely smile. 🌟</p>
                 <p class="reveal-text">Happy birthday to you, with heartfelt delight, 🎂<br>May your world be magical, day and night. ✨</p>
             </div>
-            <p class="reveal-text" style="font-size: 18px; color: #888; margin-top: 40px;">(Scroll down slowly... 👇)</p>
+            <p class="reveal-text" style="font-size: 18px; color: #888; margin-top: 40px; font-weight: bold;">(Scroll down slowly... 👇)</p>
         </div>
 
         <div class="section" id="chat-section">
-            <h2 class="reveal-text" style="font-size: 34px; color: #ff4d6d; margin-bottom: 40px;">There’s something I never said...</h2>
-            <div class="chat-container" id="chat-box"></div>
+            <h2 class="reveal-text" style="font-size: 34px; color: #ff4d6d; margin-bottom: 40px; background: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: 20px;">There’s something I never said...</h2>
+            <div class="chat-container" id="chat-box">
+                </div>
         </div>
 
         <div class="section">
             <div class="content-box">
                 <h2 class="reveal-text" style="font-size: 40px;">Hyy Prieeyal... ❤️</h2>
                 <p class="reveal-text">Khabar nathi aa vaat kevi rite saru karu, pan have badhu dil ma rakhi shakay tem nathi.</p>
-                <p class="reveal-text">Me tane 11th na starting ma first time joy hati.E time mane taru name pan nati khabr , </p>
+                <p class="reveal-text">Me tane 11th na starting ma first time joy hati. E time mane taru name pan nati khabr , </p>
                 <p class="reveal-text">Pachhi taru name and class janva malyu pachhi roj tu jova male eno j wait karto! ema j 11th puru thai gyu.</p>   
             </div>
         </div>
 
         <div class="section">
             <div class="content-box" style="border-left-color: #ff0054;">
-                <p class="reveal-text">Std 12 ma to apna class pan same thai gya hata ,e apno 12th no<span class="highlight">'Sidharth' class</span>. </p>
+                <p class="reveal-text">Std 12 ma to apna class pan same thai gya hata , e apno 12th no <span class="highlight">'Sidharth' class</span>. </p>
                 <p class="reveal-text">Tari sathe vat kris ek var avu vichryu hatu but Dhire dhire 12 th pan puru thai gyu ...</p>
                 <p class="reveal-text">School na last day par... Me last time tane joy hati. Mane andar thi darr hato kem k hu tane life ma pachhi kyarey nahi joi shaku.</p>
                 <p class="reveal-text">Mane lagyu k "I will move on easily", but e school ni yaado kyarey bhulati j nathi.</p>
@@ -318,7 +309,7 @@
         <div class="section">
             <div class="content-box glow-box">
                 <p class="reveal-text" style="font-size: 26px; font-weight: bold; color: #ff0054; line-height: 1.6; text-align: center;">
-                    "a badhi vat kai ne hu koi expectation nathi rakhto tarathi<br><br>
+                    "a badhi vat kai ne hu koi expectation nathi rakhto tarathi"<br><br>
                 </p>
                 <p class="reveal-text" style="font-size: 26px; font-weight: bold; color: #ff0054; line-height: 1.6; text-align: center;">
                      Hu tari pase koi commitment ke relationship nathi mangto. Bas mara man no bhar halko karvo hato.
@@ -327,18 +318,18 @@
         </div>
       
         <div class="section" style="min-height: 80vh;">
-            <h2 class="reveal-text" style="font-size: 42px; color: #ff0054; margin-bottom: 50px;">Do you like this ? ❤️</h2>
+            <h2 class="reveal-text" style="font-size: 42px; color: #ff0054; margin-bottom: 50px; background: rgba(255,255,255,0.6); padding: 10px 30px; border-radius: 20px;">Do you like this ? ❤️</h2>
             <div style="display: flex; gap: 20px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap;">
-                <button class="primary-btn reveal-text" onclick="showSuccess('Saras Lagyu ✨')"> GOOD ✨</button>
-                <button class="secondary-btn reveal-text" onclick="showSuccess('Bau j mast che! ❤️')"> NICE efforts ! ❤️</button>
+                <button class="primary-btn reveal-text" onclick="showSuccess('I liked it')"> I liked it ✨</button>
+                <button class="secondary-btn reveal-text" onclick="showSuccess('This is very nice')"> This is very nice ❤️</button>
             </div>
         </div>
     </div>
 
     <div id="success-screen">
         <div id="main-success-content">
-            <h1 style="font-size: 45px;">Thank you for liking this 🎉❤️</h1>
-            <p style="font-size: 22px; max-width: 100%; line-height: 1.5; margin-top: 15px;">
+            <h1 style="font-size: 45px; background: rgba(255,255,255,0.6); padding: 10px; border-radius: 20px;">Thank you for liking this 🎉❤️</h1>
+            <p style="font-size: 22px; max-width: 100%; line-height: 1.5; margin-top: 15px; font-weight: bold; color: #ff4d6d;">
                 And mari vat nu kai khotu lagyu hoy to e mate dil thi soryy !! hu tane hurt karva nathi mangto.
             </p>
 
@@ -348,8 +339,8 @@
                 </p>
                 <form id="reply-form">
                     <input type="hidden" id="gift-opinion" name="Button_Clicked" value="">
-                    <textarea id="reply-text" name="Prinsu_Message" placeholder="Type your message here..."></textarea>
-                    <button type="submit" id="send-btn" class="primary-btn">Send Reply ✨</button>
+                    <textarea id="reply-text" name="Prinsu_Message" placeholder="Type your feelings here..."></textarea>
+                    <button type="submit" id="send-btn" class="primary-btn" style="width: 100%;">Send Reply ✨</button>
                 </form>
             </div>
         </div>
@@ -362,15 +353,53 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
     <script>
         const music = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         let chatTriggered = false;
 
-        // --- NEW INTRO SEQUENCE LOGIC ---
+        /* --- MAGIC CURSOR LOGIC --- */
+        const canvas = document.getElementById('magic-cursor');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        
+        function handleInteraction(e) {
+            let x = e.touches ? e.touches[0].clientX : e.clientX;
+            let y = e.touches ? e.touches[0].clientY : e.clientY;
+            for (let i = 0; i < 3; i++) {
+                particles.push({
+                    x: x, y: y,
+                    size: Math.random() * 4 + 1,
+                    speedX: Math.random() * 2 - 1,
+                    speedY: Math.random() * 2 - 1,
+                    color: `hsl(${Math.random() * 60 + 330}, 100%, 70%)`,
+                    life: 1
+                });
+            }
+        }
+        window.addEventListener('mousemove', handleInteraction);
+        window.addEventListener('touchmove', handleInteraction);
+
+        function animateCursor() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+                p.x += p.speedX; p.y += p.speedY; p.life -= 0.02;
+            }
+            particles = particles.filter(p => p.life > 0);
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        /* --- INTRO SEQUENCE LOGIC --- */
         function turnOnLights() {
-            // Hide the Light button and remove it from flow
             const lightBtn = document.getElementById('light-btn');
             lightBtn.style.display = 'none';
             document.getElementById('dark-room').classList.add('lights-on');
@@ -385,53 +414,29 @@
         }
 
         async function startIntroSequence() {
-            // Hide intro buttons entirely so they don't block anything
             document.getElementById('intro-btn-container').style.display = 'none';
-            
-            // 1. Play Music
-            music.volume = 0.6;
-            music.play().catch(e => console.log("Audio play blocked"));
+            music.volume = 0.6; music.play().catch(e => console.log("Audio play blocked"));
             musicBtn.style.display = 'block';
 
-            // 2. Drop Huge Banner
-            await sleep(500);
-            document.getElementById('bunting').classList.add('drop');
-
-            // 3. Balloons
-            await sleep(800);
-            createBalloons(30);
-
-            // 4. Show the Special Wish Paragraph
+            await sleep(500); document.getElementById('bunting').classList.add('drop');
+            await sleep(800); createBalloons(30);
             await sleep(1200);
             const wishText = document.getElementById('intro-wish-text');
-            wishText.style.opacity = '1';
-            wishText.style.transform = 'translateY(0)';
-
-            // 5. Show Cake
-            await sleep(1500);
-            document.getElementById('cake-box').classList.add('show');
-
-            // 6. Light Candle & Sparkles & Glow
-            await sleep(1000);
-            document.getElementById('candle-flame').style.opacity = '1';
-            document.getElementById('cake-glow').style.opacity = '1';
-            createSparkles(40);
-
-            // 7. Confetti Explosion
-            await sleep(1000);
-            throwConfetti(150);
-
-            // 8. Reveal Final Button
-            await sleep(2500);
-            document.getElementById('final-intro-action').style.opacity = '1';
+            wishText.style.opacity = '1'; wishText.style.transform = 'translateY(0)';
+            
+            await sleep(1500); document.getElementById('cake-box').classList.add('show');
+            await sleep(1000); document.getElementById('candle-flame').style.opacity = '1';
+            document.getElementById('cake-glow').style.opacity = '1'; createSparkles(40);
+            
+            await sleep(1000); throwConfetti();
+            await sleep(2500); document.getElementById('final-intro-action').style.opacity = '1';
         }
 
         function createBalloons(count) {
             const colors = ['#ff0a54', '#ff477e', '#ff85a1', '#fbb1bd', '#f9bec7'];
             const container = document.getElementById('dark-room');
             for(let i=0; i<count; i++) {
-                let b = document.createElement('div');
-                b.className = 'balloon';
+                let b = document.createElement('div'); b.className = 'balloon';
                 b.style.background = colors[Math.floor(Math.random() * colors.length)];
                 b.style.left = Math.random() * 90 + 'vw';
                 b.style.animationDuration = (4 + Math.random() * 4) + 's';
@@ -440,42 +445,35 @@
             }
         }
 
-        function throwConfetti(count) {
-            const colors = ['#ff0a54', '#ffd166', '#06d6a0', '#118ab2', '#ff477e', '#fff'];
-            const container = document.getElementById('dark-room');
-            for(let i=0; i<count; i++) {
-                let c = document.createElement('div');
-                c.className = 'confetti';
-                c.style.background = colors[Math.floor(Math.random() * colors.length)];
-                c.style.left = Math.random() * 100 + 'vw';
-                c.style.animationDuration = (2 + Math.random() * 3) + 's';
-                c.style.animationDelay = (Math.random() * 1.5) + 's';
-                container.appendChild(c);
-            }
+        function throwConfetti() {
+            var duration = 4000; var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10003 };
+            var interval = setInterval(function() {
+              var timeLeft = animationEnd - Date.now();
+              if (timeLeft <= 0) return clearInterval(interval);
+              var particleCount = 50 * (timeLeft / duration);
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random() * 0.2 + 0.1, y: Math.random() - 0.2 } }));
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random() * 0.2 + 0.7, y: Math.random() - 0.2 } }));
+            }, 250);
         }
 
         function createSparkles(count) {
             const container = document.getElementById('dark-room');
             for(let i=0; i<count; i++) {
-                let s = document.createElement('div');
-                s.className = 'sparkle';
-                s.innerText = '✨';
-                s.style.left = (50 + (Math.random() * 40 - 20)) + 'vw';
-                s.style.top = (50 + (Math.random() * 40 - 20)) + 'vh';
-                s.style.animationDelay = (Math.random() * 2) + 's';
-                container.appendChild(s);
+                let s = document.createElement('div'); s.className = 'sparkle'; s.innerText = '✨';
+                s.style.left = (50 + (Math.random() * 40 - 20)) + 'vw'; s.style.top = (50 + (Math.random() * 40 - 20)) + 'vh';
+                s.style.animationDelay = (Math.random() * 2) + 's'; container.appendChild(s);
             }
         }
 
-        // --- START MAIN LETTER ---
         function startFlow() {
             const intro = document.getElementById('dark-room');
-            intro.style.transform = 'translateY(-100vh)';
+            intro.style.transform = 'scale(1.5) translateZ(50px)';
+            intro.style.opacity = '0'; intro.style.pointerEvents = 'none';
             setTimeout(() => {
                 intro.style.display = 'none';
                 document.getElementById('flow-container').style.display = 'block';
-                document.body.classList.remove('locked'); 
-                window.scrollTo(0, 0);
+                document.body.classList.remove('locked'); window.scrollTo(0, 0);
             }, 1200);
         }
 
@@ -484,60 +482,77 @@
             else { music.pause(); musicBtn.innerText = '🔇'; }
         }
 
-        // --- SCROLL ANIMATIONS ---
+        /* --- SCROLL REVEAL ANIMATIONS --- */
         const observer = new IntersectionObserver((entries) => {
             let delay = 0; 
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     setTimeout(() => entry.target.classList.add('visible'), delay);
-                    delay += 1200; 
-                    observer.unobserve(entry.target); 
+                    delay += 800; observer.unobserve(entry.target); 
                 }
             });
         }, { threshold: 0.15 });
         document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
 
-        // --- YOUR EXACT CHAT SIMULATION WORDS ---
+        /* --- ADVANCED CHAT LOGIC (WITH TYPING INDICATOR) --- */
         const chatObserver = new IntersectionObserver((entries) => {
             if(entries[0].isIntersecting && !chatTriggered) {
-                chatTriggered = true;
-                runChatSimulation();
+                chatTriggered = true; runChatSimulation();
             }
         });
         chatObserver.observe(document.getElementById('chat-section'));
 
         async function runChatSimulation() {
             const chatBox = document.getElementById('chat-box');
+            
+            const showTyping = async () => {
+                const t = document.createElement('div');
+                t.className = 'typing-indicator show';
+                t.innerHTML = '<span></span><span></span><span></span>';
+                chatBox.appendChild(t);
+                t.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                await sleep(1800); // Simulate typing time
+                t.classList.remove('show');
+                await sleep(300);
+                t.remove();
+            };
+
             const createBubble = (text) => {
                 const b = document.createElement('div');
                 b.className = 'chat-bubble'; b.innerText = text;
                 chatBox.appendChild(b);
-                setTimeout(() => b.style.opacity = '1', 100);
+                setTimeout(() => b.classList.add('show'), 50);
+                b.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 return b;
             };
 
-            await sleep(1500);
+            await sleep(1000);
+            
+            await showTyping();
             let b1 = createBubble('Hi Priyal...');
-            await sleep(1500);
-            b1.style.opacity = '0'; setTimeout(() => b1.remove(), 800);
-
-            await sleep(1500);
+            
+            await sleep(2500); // Wait while she reads it
+            b1.classList.remove('show'); setTimeout(() => b1.remove(), 500);
+            
+            await sleep(800);
+            await showTyping();
             let b2 = createBubble('I wanted to tell you something...');
-            await sleep(2000);
-            b2.style.opacity = '0'; setTimeout(() => b2.remove(), 800);
+            
+            await sleep(3000); 
+            b2.classList.remove('show'); setTimeout(() => b2.remove(), 500);
 
-            await sleep(2000);
+            await sleep(800);
+            await showTyping();
             createBubble('so please read this ones , in this  no any intention behind it or no any any expectation from you ');
         }
 
-        // --- SUCCESS & FORMSPREE LOGIC ---
+        /* --- SUCCESS & FORMSPREE LOGIC --- */
         function showSuccess(buttonChoice) {
             document.getElementById('gift-opinion').value = buttonChoice; 
             document.getElementById('flow-container').style.display = 'none';
             document.body.classList.add('locked'); 
             const success = document.getElementById('success-screen');
-            success.style.display = 'flex'; 
-            window.scrollTo(0, 0);
+            success.style.display = 'flex'; window.scrollTo(0, 0);
         }
 
         document.getElementById('reply-form').addEventListener('submit', function(e) {
@@ -545,17 +560,14 @@
             const text = document.getElementById('reply-text').value.trim();
             const btn = document.getElementById('send-btn');
             if (text === "") {
-                btn.classList.add('shake-error');
-                btn.innerText = "Write something! 🥺";
+                btn.classList.add('shake-error'); btn.innerText = "Write something! 🥺";
                 setTimeout(() => { btn.classList.remove('shake-error'); btn.innerText = "Send Reply ✨"; }, 600);
                 return;
             }
             btn.innerText = "Sending... 🕊️";
             const formspreeLink = "https://formspree.io/f/xdapeylw";
             fetch(formspreeLink, {
-                method: "POST",
-                body: new FormData(this),
-                headers: { 'Accept': 'application/json' }
+                method: "POST", body: new FormData(this), headers: { 'Accept': 'application/json' }
             }).then(response => {
                 if (response.ok) {
                     document.getElementById('main-success-content').style.display = 'none';
@@ -563,12 +575,16 @@
                     postScreen.style.display = 'block';
                     let delay = 0;
                     postScreen.querySelectorAll('.reveal-text').forEach(el => {
-                        setTimeout(() => el.classList.add('visible'), delay);
-                        delay += 1200; 
+                        setTimeout(() => el.classList.add('visible'), delay); delay += 1200; 
                     });
                     setTimeout(() => { window.location.reload(); }, 8000);
                 } else { btn.innerText = "Error! Try again."; }
             }).catch(error => { btn.innerText = "Error! Try again."; });
+        });
+
+        /* --- INITIALIZE 3D TILT EFFECT --- */
+        VanillaTilt.init(document.querySelectorAll(".content-box"), {
+            max: 12, speed: 400, glare: true, "max-glare": 0.2, scale: 1.02
         });
     </script>
 </body>
